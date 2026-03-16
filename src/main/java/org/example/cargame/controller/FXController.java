@@ -2,7 +2,10 @@ package org.example.cargame.controller;
 
 import org.example.cargame.enums.EngineType;
 import org.example.cargame.Servicelayer;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class FXController {
 
     private final Servicelayer servicelayer;
