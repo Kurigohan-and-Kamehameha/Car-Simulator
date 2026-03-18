@@ -1,11 +1,6 @@
 package org.example.cargameFx.components;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-@Component
-@Scope("prototype")
-public class VelocityComponent extends org.example.cargameFx.components.Component {
+public class VelocityComponent extends Component {
     private volatile double vx, vy;
 
     public double getVx() {

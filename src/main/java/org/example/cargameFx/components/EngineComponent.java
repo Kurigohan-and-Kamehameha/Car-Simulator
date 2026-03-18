@@ -2,14 +2,10 @@ package org.example.cargameFx.components;
 
 import org.example.cargameFx.enums.EngineType;
 import org.example.cargameFx.engine.Engine;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
-@Scope("prototype")
-public class EngineComponent extends org.example.cargameFx.components.Component {
+public class EngineComponent extends Component {
     private final Map<String, Engine> engines;
     private Engine activeEngine;
 

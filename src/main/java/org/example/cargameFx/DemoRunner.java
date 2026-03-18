@@ -1,6 +1,7 @@
 package org.example.cargameFx;
 
-import org.example.cargameFx.controller.FXController;
+import javafx.scene.paint.Paint;
+import org.example.cargameFx.fxComponents.FXController;
 import org.example.cargameFx.entity.Car;
 import org.example.cargameFx.enums.EngineType;
 import org.example.cargameFx.observer.ObserverDispatcher;
@@ -15,22 +16,22 @@ import org.springframework.stereotype.Component;
 public class DemoRunner implements CommandLineRunner {
 
     private final Model model;
-    private final Servicelayer servicelayer;
     private final ObserverDispatcher dispatcher;
     private final CommandQueue commands;
+    FXController fxController;
 
-    public DemoRunner(Model model, Servicelayer servicelayer, ObserverDispatcher dispatcher, CommandQueue commands){
+    public DemoRunner(Model model, ObserverDispatcher dispatcher, CommandQueue commands, FXController fxController){
         this.model = model;
-        this.servicelayer = servicelayer;
         this.dispatcher = dispatcher;
         this.commands = commands;
+        this.fxController = fxController;
     }
 
     @Override
     public void run(String @NonNull ... args) throws Exception {
         PhysicsEngine physics = new PhysicsEngine(model);
         GameLoop loop = new GameLoop(physics, commands, dispatcher);
-        ColorEngineView viewColEng = new ColorEngineView(model);
+        //ColorEngineView viewColEng = new ColorEngineView(model);
         PossitionView viewPos = new PossitionView(model);
 
         Thread observerThread = new Thread(dispatcher, "ObserverThread");
@@ -40,12 +41,6 @@ public class DemoRunner implements CommandLineRunner {
         Thread loopThread = new Thread(loop, "GameLoopThread");
         loopThread.setDaemon(true);
         loopThread.start();
-
-        Car car = (Car) model.getEntityList().getFirst();
-        FXController fxController = new FXController(servicelayer);
-
-        fxController.setColor("blue");
-        fxController.setEngine(EngineType.ELECTRIC);
-
     }
+
 }

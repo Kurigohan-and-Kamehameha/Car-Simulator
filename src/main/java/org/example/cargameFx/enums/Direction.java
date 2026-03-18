@@ -15,7 +15,7 @@ public enum Direction {
         this.dy = dy;
     }
 
-    public int getDx() { return dx; }
-    public int getDy() { return dy; }
+    public double vx(double speed) { return dx * speed; }
+    public double vy(double speed) { return dy * speed; }
 
 }
