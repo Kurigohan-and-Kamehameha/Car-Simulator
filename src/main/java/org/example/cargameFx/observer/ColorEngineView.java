@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ColorEngineView extends CarView implements EngineObserver, ColorObserver{
-
     private volatile String color;
     private volatile EngineType engineType;
 

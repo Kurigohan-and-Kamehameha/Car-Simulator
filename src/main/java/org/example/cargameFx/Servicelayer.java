@@ -22,7 +22,13 @@ public class Servicelayer {
 
     public void stop(){
         EntityId playerId = model.getPlayerId();
-        commands.submit(() -> model.getStates().get(playerId).state = State.WAIT_AT_INTERSECTION);
+        commands.submit(() -> {
+            model.getStates().get(playerId).state = State.WAIT_AT_WORKSHOP;
+
+            dispatcher.dispatch(() ->
+                    model.getStates().get(playerId).notifyObservers()
+            );
+        });
     }
 
     public void setDirection(int dx, int dy){
@@ -32,6 +38,10 @@ public class Servicelayer {
             VelocitySnapshot newSnap = new VelocitySnapshot(dx * speed, dy * speed);
             model.getVelocities().get(playerId).setSnapshot(newSnap);
             model.getStates().get(playerId).state = State.DRIVE;
+
+            dispatcher.dispatch(() ->
+                    model.getStates().get(playerId).notifyObservers()
+            );
         });
     }
 
@@ -40,6 +50,7 @@ public class Servicelayer {
         commands.submit(() -> {
             if (State.WAIT_AT_WORKSHOP == model.getStates().get(playerId).state) {
                 model.getColors().get(playerId).setColor(color);
+
                 dispatcher.dispatch(() -> {
                     model.getColors().get(playerId).notifyObservers();
                     if(afterUpdate != null){
@@ -55,6 +66,7 @@ public class Servicelayer {
         commands.submit(() -> {
             if(State.WAIT_AT_WORKSHOP == model.getStates().get(playerId).state) {
                 model.getEngines().get(playerId).setEngine(engineType);
+
                 dispatcher.dispatch(() -> {
                     model.getEngines().get(playerId).notifyObservers();
                     if(afterUpdate != null){
