@@ -4,12 +4,16 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import org.example.cargameFx.enums.EngineType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,6 +28,8 @@ public class Gui extends AnimationTimer {
         this.fxController = fxController;
         this.root = new BorderPane();
 
+        HBox hBox = new HBox();
+
         circle = new Circle();
         circle.setFill(Paint.valueOf(fxController.getColor()));
         circle.setRadius(10);
@@ -35,12 +41,29 @@ public class Gui extends AnimationTimer {
         colorPicker.setValue(Color.valueOf(fxController.getColor()));
         colorPicker.setOnAction(event -> {
             Color selectedColor = colorPicker.getValue();
+
             fxController.setColor(selectedColor.toString(), () ->
                     Platform.runLater(() -> circle.setFill(Paint.valueOf(fxController.getColor())))
             );
         });
 
-        root.setTop(colorPicker);
+        Label engineLabel = new Label();
+        engineLabel.setText(fxController.getEngine().toString());
+
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.setFocusTraversable(false);
+        comboBox.getItems().addAll(EngineType.FUEL.toString(), EngineType.ELECTRIC.toString());
+        comboBox.setValue(fxController.getEngine().toString());
+
+        comboBox.setOnAction(event -> {
+            String selectedEngine = comboBox.getValue();
+            fxController.setEngine(EngineType.fromDisplayName(selectedEngine), () ->
+                    Platform.runLater(() -> engineLabel.setText(fxController.getEngine().toString()))
+            );
+        });
+
+        hBox.getChildren().addAll(colorPicker, comboBox, engineLabel);
+        root.setTop(hBox);
     }
 
     public void initUI(Scene scene) {

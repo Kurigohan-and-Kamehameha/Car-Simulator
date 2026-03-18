@@ -1,21 +1,15 @@
 package org.example.cargameFx.components;
 
+import org.example.cargameFx.snapshot.VelocitySnapshot;
+
 public class VelocityComponent extends Component {
-    private volatile double vx, vy;
+    private volatile VelocitySnapshot snapshot = new VelocitySnapshot(0,0);
 
-    public double getVx() {
-        return vx;
+    public VelocitySnapshot getSnapshot() {
+        return snapshot;
     }
 
-    public void setVx(double vx) {
-        this.vx = vx;
-    }
-
-    public double getVy() {
-        return vy;
-    }
-
-    public void setVy(double vy) {
-        this.vy = vy;
+    public void setSnapshot(VelocitySnapshot snapshot) {
+        this.snapshot = snapshot;
     }
 }

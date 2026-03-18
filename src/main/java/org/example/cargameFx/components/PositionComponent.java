@@ -1,21 +1,15 @@
 package org.example.cargameFx.components;
 
+import org.example.cargameFx.snapshot.PositionSnapshot;
+
 public class PositionComponent extends Component {
-    private volatile double x, y;
+    private volatile PositionSnapshot snapshot = new PositionSnapshot(0,0);
 
-    public double getY() {
-        return y;
+    public PositionSnapshot getSnapshot() {
+        return snapshot;
     }
 
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
+    public void setSnapshot(PositionSnapshot snapshot) {
+        this.snapshot = snapshot;
     }
 }

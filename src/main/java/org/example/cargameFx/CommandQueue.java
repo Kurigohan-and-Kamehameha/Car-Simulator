@@ -8,10 +8,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Component
 public class CommandQueue {
 
-    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(1000);
 
     public void submit(Runnable command) {
-        queue.add(command);
+        if (!queue.offer(command)) {
+            System.out.println("CommandQueue full! Dropping command.");
+        }
     }
 
     public void executeAll() {

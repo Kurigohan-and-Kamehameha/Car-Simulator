@@ -1,12 +1,14 @@
 package org.example.cargameFx.observer;
 
-import org.example.cargameFx.entity.Car;
-import org.example.cargameFx.subject.Model;
+import org.example.cargameFx.Model;
+import org.example.cargameFx.entity.EntityId;
 
 abstract class  CarView {
-    protected final Car car;
+    protected final Model model;
+    protected final EntityId playerId;
 
     public CarView(Model model){
-        this.car = (Car) model.getEntityList().getFirst();
+        this.model = model;
+        this.playerId = model.getPlayerId();
     }
 }

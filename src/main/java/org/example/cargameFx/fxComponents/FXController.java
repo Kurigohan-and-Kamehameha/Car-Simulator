@@ -3,7 +3,7 @@ package org.example.cargameFx.fxComponents;
 import org.example.cargameFx.enums.EngineType;
 import org.example.cargameFx.Servicelayer;
 import org.example.cargameFx.observer.ColorEngineView;
-import org.example.cargameFx.observer.PossitionView;
+import org.example.cargameFx.observer.PositionView;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -11,9 +11,9 @@ public class FXController {
 
     private final Servicelayer servicelayer;
     private final ColorEngineView viewColEng;
-    private final PossitionView viewPos;
+    private final PositionView viewPos;
 
-    public FXController(Servicelayer servicelayer, ColorEngineView viewColEng, PossitionView viewPos){
+    public FXController(Servicelayer servicelayer, ColorEngineView viewColEng, PositionView viewPos){
         this.servicelayer = servicelayer;
         this.viewColEng = viewColEng;
         this.viewPos = viewPos;

@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class EngineComponent extends Component {
     private final Map<String, Engine> engines;
-    private Engine activeEngine;
+    private volatile Engine activeEngine;
 
     public EngineComponent(Map<String, Engine> engines) {
         this.engines = engines;
