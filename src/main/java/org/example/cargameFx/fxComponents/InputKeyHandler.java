@@ -7,12 +7,12 @@ import javafx.scene.input.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InputHandler implements EventHandler<KeyEvent> {
+public class InputKeyHandler implements EventHandler<KeyEvent> {
 
     private final Set<KeyCode> pressedKeys = new HashSet<>();
     private final FXController fxController;
 
-    public InputHandler(FXController fxController) {
+    public InputKeyHandler(FXController fxController) {
         this.fxController = fxController;
     }
 
@@ -39,7 +39,7 @@ public class InputHandler implements EventHandler<KeyEvent> {
         if (pressedKeys.contains(KeyCode.RIGHT)) dx += 1;
 
         if (dx != 0 || dy != 0) {
-            fxController.setDirection(dx, dy); // ggf. Richtung + Speed in Controller
+            fxController.setDirection(dx, dy);
         } else {
             fxController.stop();
         }

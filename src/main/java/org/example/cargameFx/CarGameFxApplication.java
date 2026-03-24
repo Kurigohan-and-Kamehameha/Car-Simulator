@@ -41,14 +41,13 @@ public class CarGameFxApplication extends Application {
         scene.getStylesheets().add(
                 Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm()
         );
-
+        gui.initUI(scene);
         primaryStage.setScene(scene);
         primaryStage.setWidth(1000);
         primaryStage.setHeight(800);
         primaryStage.show();
 
-        gui.initUI(scene);
         gui.start();
-
     }
+
 }

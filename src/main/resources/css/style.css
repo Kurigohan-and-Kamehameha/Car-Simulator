@@ -1,4 +1,13 @@
-.engine-label {
+.engineType-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.label {
+    -fx-font-size: 16px;
+}
+
+.power-label {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }

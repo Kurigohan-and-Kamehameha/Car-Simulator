@@ -3,7 +3,7 @@ package org.example.cargameFx.components;
 import org.example.cargameFx.snapshot.PositionSnapshot;
 
 public class PositionComponent extends Component {
-    private volatile PositionSnapshot snapshot = new PositionSnapshot(0,0);
+    private volatile PositionSnapshot snapshot;
 
     public PositionSnapshot getSnapshot() {
         return snapshot;

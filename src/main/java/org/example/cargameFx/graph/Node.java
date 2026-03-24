@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-    private NodeType type;
+    private final NodeType type;
     private final String id;
     private final double x;
     private final double y;
@@ -16,6 +16,7 @@ public class Node {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.type = type;
         this.edges = new ArrayList<>();
     }
 
@@ -41,6 +42,15 @@ public class Node {
 
     public void addEdge(Edge edge) {
         edges.add(edge);
+    }
+
+    public List<String> getNeighbors(Node currentNode){
+        List<String> nodeIdList = new ArrayList<>();
+        for (Edge edge : currentNode.getEdges()) {
+            Node neighbor = edge.getFrom().equals(currentNode) ? edge.getTo() : edge.getFrom();
+            nodeIdList.add(neighbor.getId());
+        }
+        return nodeIdList;
     }
 
     @Override

@@ -3,12 +3,19 @@ package org.example.cargameFx.graph;
 public class Edge {
     private final Node from;
     private final Node to;
-    private final double weight;
+    private double weight;
 
-    public Edge(Node from, Node to, double weight) {
+    public Edge(Node from, Node to) {
         this.from = from;
         this.to = to;
-        this.weight = weight;
+        calculate();
+    }
+
+    private void calculate() {
+        this.weight = Math.hypot(
+                this.getTo().getX() - this.getFrom().getX(),
+                this.getTo().getY() - this.getFrom().getY()
+        );
     }
 
     public Node getFrom() {

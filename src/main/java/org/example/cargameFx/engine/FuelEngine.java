@@ -7,4 +7,9 @@ public class FuelEngine implements Engine{
     public EngineType getType() {
         return EngineType.FUEL;
     }
+
+    @Override
+    public double capacity() {
+        return 4000;
+    }
 }

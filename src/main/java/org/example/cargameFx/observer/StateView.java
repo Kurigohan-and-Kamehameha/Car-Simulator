@@ -10,13 +10,13 @@ public class StateView extends CarView implements Observer{
 
     public StateView(Model model) {
         super(model);
-        this.state = model.getStates().get(playerId).state;
+        this.state = model.getStates().get(playerId).get();
         model.getStates().get(playerId).addObserver(this);
     }
 
     @Override
     public void update() {
-        this.state = model.getStates().get(playerId).state;
+        this.state = model.getStates().get(playerId).get();
     }
 
     public State getState(){

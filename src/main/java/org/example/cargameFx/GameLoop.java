@@ -5,7 +5,6 @@ import org.example.cargameFx.observer.ObserverDispatcher;
 import java.util.concurrent.locks.LockSupport;
 
 public class GameLoop implements Runnable {
-
     private final PhysicsEngine physics;
     private final CommandQueue commands;
     private final ObserverDispatcher dispatcher;
@@ -24,7 +23,7 @@ public class GameLoop implements Runnable {
 
             commands.executeAll();
             physics.update();
-
+            //physics.updateDriveFree();
             dispatcher.dispatch(physics::notifyObservers);
 
             long elapsed = System.currentTimeMillis() - start;

@@ -17,12 +17,10 @@ public class CommandQueue {
     }
 
     public void executeAll() {
-
         Runnable command;
 
         while ((command = queue.poll()) != null) {
             command.run();
         }
-
     }
 }

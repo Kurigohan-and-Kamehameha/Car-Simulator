@@ -1,11 +1,17 @@
 package org.example.cargameFx.snapshot;
 
-public final class PositionSnapshot {
-    public final double x;
-    public final double y;
+import org.example.cargameFx.graph.Edge;
+import org.example.cargameFx.graph.Node;
 
-    public PositionSnapshot(double x, double y) {
-        this.x = x;
-        this.y = y;
+public record PositionSnapshot(
+        Node currentNode,
+        Edge currentEdge,
+        double edgeProgress,
+        double x,
+        double y) {
+
+    public PositionSnapshot(Node node) {
+        this(node, null, 0.0, node.getX(), node.getY());
     }
+
 }

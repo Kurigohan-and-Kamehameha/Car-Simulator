@@ -1,30 +1,24 @@
 package org.example.cargameFx.graph;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Graph {
-    private final List<Node> nodes;
-    private final List<Edge> edges;
-
-    public Graph() {
-        nodes = new ArrayList<>();
-        edges = new ArrayList<>();
-    }
+    private final Map<String, Node> nodesById = new HashMap<>();
+    private final List<Edge> edges = new ArrayList<>();
 
     public void addNode(Node node) {
-        nodes.add(node);
+        nodesById.put(node.getId(), node);
     }
 
-    public void addEdge(Node from, Node to, double weight) {
-        Edge edge = new Edge(from, to, weight);
+    public void addEdge(Node from, Node to) {
+        Edge edge = new Edge(from, to);
         edges.add(edge);
         from.addEdge(edge);
         to.addEdge(edge);
     }
 
-    public List<Node> getNodes() {
-        return nodes;
+    public Collection<Node> getNodes() {
+        return nodesById.values();
     }
 
     public List<Edge> getEdges() {
@@ -32,12 +26,7 @@ public class Graph {
     }
 
     public Node getNodeById(String id) {
-        for (Node node : nodes) {
-            if (node.getId().equals(id)) {
-                return node;
-            }
-        }
-        return null;
+        return nodesById.get(id);
     }
 
     @Override

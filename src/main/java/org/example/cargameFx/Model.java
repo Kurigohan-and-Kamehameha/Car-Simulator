@@ -9,11 +9,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Model {
     private final Map<EntityId, PositionComponent> positions = new ConcurrentHashMap<>();
+    private final Map<EntityId, PositionComponentDriveFree> positionsDF = new ConcurrentHashMap<>();
     private final Map<EntityId, VelocityComponent> velocities = new ConcurrentHashMap<>();
+    private final Map<EntityId, EnergyStorageComponent> storage = new ConcurrentHashMap<>();
     private final Map<EntityId, ColorComponent> colors = new ConcurrentHashMap<>();
     private final Map<EntityId, EngineComponent> engines = new ConcurrentHashMap<>();
     private final Map<EntityId, StateComponent> states = new ConcurrentHashMap<>();
     private final Map<EntityId, SpeedComponent> speeds = new ConcurrentHashMap<>();
+    private final Map<EntityId, PathComponent> paths = new ConcurrentHashMap<>();
 
     private final AtomicInteger nextId = new AtomicInteger();
     private EntityId playerId;
@@ -23,12 +26,15 @@ public class Model {
     }
 
     public void removeEntity(EntityId id) {
+        positionsDF.remove(id);
         positions.remove(id);
         velocities.remove(id);
         colors.remove(id);
         engines.remove(id);
         states.remove(id);
         speeds.remove(id);
+        paths.remove(id);
+        storage.remove(id);
     }
 
     public void setPlayer(EntityId id) {
@@ -41,12 +47,16 @@ public class Model {
 
     public Iterable<EntityId> getAllEntities() {
         return positions.keySet();
+        //return positionsDF.keySet();
     }
 
+    public Map<EntityId, PositionComponentDriveFree> getPositionsDF() { return positionsDF; }
     public Map<EntityId, PositionComponent> getPositions() { return positions; }
     public Map<EntityId, VelocityComponent> getVelocities() { return velocities; }
+    public Map<EntityId, EnergyStorageComponent> getStorage() { return storage; }
     public Map<EntityId, ColorComponent> getColors() { return colors; }
     public Map<EntityId, EngineComponent> getEngines() { return engines; }
     public Map<EntityId, StateComponent> getStates() { return states; }
     public Map<EntityId, SpeedComponent> getSpeeds() { return speeds; }
+    public Map<EntityId, PathComponent> getPaths() { return paths; }
 }
