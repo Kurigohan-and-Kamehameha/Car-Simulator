@@ -1,2 +1,0 @@
-POST http://localhost:8080/engine/FUEL
-Content-Type: application/json
