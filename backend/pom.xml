@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.example</groupId>
-    <artifactId>CarGameFx</artifactId>
+    <artifactId>Car_Simulator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>CarGameFx</name>
-    <description>CarGameFx</description>
+    <name>CarSimulator</name>
+    <description>CarSimulator</description>
 
     <properties>
         <java.version>21</java.version>
