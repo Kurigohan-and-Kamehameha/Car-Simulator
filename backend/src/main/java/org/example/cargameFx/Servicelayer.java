@@ -28,15 +28,6 @@ public class Servicelayer {
         this.graph = graph;
     }
 
-    public void stop() {
-        EntityId playerId = model.getPlayerId();
-        commands.submit(() -> {
-            model.getStates().get(playerId).set(State.WAIT_AT_WORKSHOP);
-
-            dispatcher.dispatch(() -> model.getStates().get(playerId).notifyObservers());
-        });
-    }
-
     public void setDirection(String targetId) {
         EntityId playerId = model.getPlayerId();
 

@@ -46,10 +46,6 @@ public class GameRestController {
         this.viewMessage = viewMessage;
     }
 
-    public void stop() {
-        servicelayer.stop();
-    }
-
     @PostMapping("/direction")
     public void setDirection(@RequestParam String id) {
         servicelayer.setDirection(id);
