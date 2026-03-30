@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { setColor, setEngine, setSpeed } from '../api';
+import { setColor, setEngine, setSpeed, saveGame, loadGame } from '../api';
 
 const ControlPanel = ({ gameState }) => {
   const [localColor, setLocalColor] = useState('#3498db');
@@ -42,6 +42,40 @@ const ControlPanel = ({ gameState }) => {
   };
 
   const isWorkshop = gameState?.state === 'WAIT_AT_WORKSHOP';
+
+  const handleSave = async () => {
+    try {
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: 'game-save.json',
+          types: [{ description: 'JSON File', accept: { 'application/json': ['.json'] } }],
+        });
+        await saveGame(handle.name);
+      } else {
+        const fileName = prompt("Enter file name to save as:", "game-save.json");
+        if (fileName) await saveGame(fileName);
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') console.error("Failed to save", err);
+    }
+  };
+
+  const handleLoad = async () => {
+    try {
+      if (window.showOpenFilePicker) {
+        const [handle] = await window.showOpenFilePicker({
+          types: [{ description: 'JSON File', accept: { 'application/json': ['.json'] } }],
+          multiple: false
+        });
+        await loadGame(handle.name);
+      } else {
+        const fileName = prompt("Enter file name to load:", "game-save.json");
+        if (fileName) await loadGame(fileName);
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') console.error("Failed to load", err);
+    }
+  };
 
   return (
     <div className="control-panel">
@@ -91,6 +125,15 @@ const ControlPanel = ({ gameState }) => {
           />
           <span className="color-hex">{localColor}</span>
         </div>
+      </div>
+
+      <div className="control-group save-load-buttons">
+        <button className="action-btn" onClick={handleSave}>
+          💾 Save
+        </button>
+        <button className="action-btn" onClick={handleLoad}>
+          📂 Load
+        </button>
       </div>
       
       {/* Warning Box (Yellow) */}

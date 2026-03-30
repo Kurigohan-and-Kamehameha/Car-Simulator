@@ -22,3 +22,11 @@ export const setEngine = async (engineType) => {
 export const setSpeed = async (speed) => {
   await axios.post(`${API_BASE}/speed?speed=${speed}`);
 };
+
+export const saveGame = async (path) => {
+  await axios.post(`${API_BASE}/save?path=${encodeURIComponent(path)}`);
+};
+
+export const loadGame = async (path) => {
+  await axios.post(`${API_BASE}/load?path=${encodeURIComponent(path)}`);
+};
