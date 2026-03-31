@@ -3,6 +3,7 @@ package org.example.cargame;
 import org.example.cargame.components.ColorComponent;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.observer.ColorView;
+import org.example.cargame.observer.ObserverDispatcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -30,7 +31,8 @@ class ColorComponentTests {
         ColorComponent component = new ColorComponent();
         component.setColor("blue");
 
-        ColorView view = new ColorView(new DummyModel(component));
+        ObserverDispatcher dispatcher = new ObserverDispatcher();
+        ColorView view = new ColorView(new DummyModel(component), dispatcher);
         EntityId id = new EntityId(0);
 
         component.setColor("green");
@@ -61,4 +63,6 @@ class ColorComponentTests {
         }
 
     }
+
+
 }

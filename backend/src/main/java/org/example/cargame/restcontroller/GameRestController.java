@@ -4,6 +4,7 @@ import org.example.cargame.enums.EngineType;
 import org.example.cargame.Servicelayer;
 import org.example.cargame.enums.State;
 import org.example.cargame.graph.Graph;
+import org.example.cargame.snapshot.GameStateDTO;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -53,44 +55,16 @@ public class GameRestController {
         servicelayer.load(path);
     }
 
-    public List<Integer> getAllIds() {
-        return servicelayer.getAllEntities();
+    public Map<Integer, GameStateDTO> getAllGameStates() {
+        return servicelayer.getAllGameStates();
     }
 
-    public double getPosX(int id) {
-        return servicelayer.getPosX(id);
+    public boolean getLoadingCompete(){
+        return servicelayer.getLoadingCompete();
     }
 
-    public double getPosY(int id) {
-        return servicelayer.getPosY(id);
-    }
-
-    public String getColor(int id) {
-        return servicelayer.getColor(id);
-    }
-
-    public EngineType getEngine(int id) {
-        return servicelayer.getEngine(id);
-    }
-
-    public double getPower(int id) {
-        return servicelayer.getPower(id);
-    }
-
-    public State getState(int id) {
-        return servicelayer.getState(id);
-    }
-
-    public String getWarningMessage(int id) {
-        return servicelayer.getWarningMessage(id);
-    }
-
-    public String getAlertMessage(int id) {
-        return servicelayer.getAlertMessage(id);
-    }
-
-    public double getSpeed(int id) {
-        return servicelayer.getSpeed(id);
+    public boolean getUpdateInProgress(){
+        return servicelayer.getUpdateInProgress();
     }
 
     @GetMapping("/graph")

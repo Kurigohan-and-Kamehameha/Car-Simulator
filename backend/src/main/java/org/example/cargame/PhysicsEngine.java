@@ -108,7 +108,6 @@ public class PhysicsEngine {
     }
 
     public void notifyObservers() {
-
         for (EntityId id : model.getAllEntities()) {
             model.getPositions().get(id).notifyObservers(id);
             model.getStates().get(id).notifyObservers(id);

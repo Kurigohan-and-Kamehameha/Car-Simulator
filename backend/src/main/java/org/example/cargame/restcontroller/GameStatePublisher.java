@@ -1,5 +1,6 @@
 package org.example.cargame.restcontroller;
 
+import org.example.cargame.snapshot.GameStateDTO;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,25 +22,12 @@ public class GameStatePublisher {
 
     @Scheduled(fixedRate = 50)
     public void publishGameState() {
-        for(int id : gameRestController.getAllIds()){
-            if(!gameRestController.getAllIds().isEmpty()){
-                try{
-                    Map<String, Object> gameState = new HashMap<>();
-                    gameState.put("x", gameRestController.getPosX(id));
-                    gameState.put("y", gameRestController.getPosY(id));
-                    gameState.put("state", gameRestController.getState(id));
-                    gameState.put("power", gameRestController.getPower(id));
-                    gameState.put("color", gameRestController.getColor(id));
-                    gameState.put("engine", gameRestController.getEngine(id));
-                    gameState.put("message", gameRestController.getAlertMessage(id));
-                    gameState.put("warning", gameRestController.getWarningMessage(id));
-                    gameState.put("speed", gameRestController.getSpeed(id));
+        Map<Integer, GameStateDTO> snapshot = gameRestController.getAllGameStates();
 
-                    messagingTemplate.convertAndSend("/topic/game", (Object) gameState);
-                } finally {
+        if (!gameRestController.getLoadingCompete() || gameRestController.getUpdateInProgress()) return;
 
-                }
-            }
-        }
+        snapshot.forEach((id, state) -> {
+            messagingTemplate.convertAndSend("/topic/game", state);
+        });
     }
 }

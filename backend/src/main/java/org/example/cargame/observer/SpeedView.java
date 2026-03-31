@@ -2,7 +2,11 @@ package org.example.cargame.observer;
 
 import org.example.cargame.CarModel;
 import org.example.cargame.entity.EntityId;
+import org.example.cargame.enums.ActionType;
+import org.example.cargame.events.EntityUpdateEvent;
+import org.example.cargame.snapshot.PositionSnapshot;
 import org.example.cargame.snapshot.SpeedSnapshot;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -10,10 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
-    private final Map<EntityId, SpeedSnapshot> snapshots = new ConcurrentHashMap<>();
+    private final Map<EntityId, SpeedSnapshot> cache = new ConcurrentHashMap<>();
 
-    public SpeedView(CarModel model) {
-        super(model);
+    public SpeedView(CarModel model, ObserverDispatcher dispatcher) {
+        super(model, dispatcher);
 
         bind();
     }
@@ -21,40 +25,39 @@ public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
     @Override
     public void bind() {
         for (EntityId id : model.getAllEntities()) {
-            SpeedSnapshot snap = model.getSpeeds().get(id).getSnapshot();
-            snapshots.put(id, snap);
-
-            model.getSpeeds().get(id).addObserver(this);
+            bind(id);
         }
     }
 
     @Override
     public void bind(EntityId id) {
         SpeedSnapshot snap = model.getSpeeds().get(id).getSnapshot();
-        snapshots.put(id, snap);
+        cache.put(id, snap);
         model.getSpeeds().get(id).addObserver(this);
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
     }
 
     @Override
     public void rebind() {
-        snapshots.clear();
+        cache.clear();
         bind();
     }
 
     @Override
     public void unbind(EntityId id) {
-        snapshots.remove(id);
+        cache.remove(id);
         model.getSpeeds().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.REMOVE));
     }
 
     @Override
     public void update(EntityId id) {
-        SpeedSnapshot snap = model.getSpeeds().get(id).getSnapshot();
-        snapshots.put(id, snap);
+        cache.put(id, model.getSpeeds().get(id).getSnapshot());
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
     }
 
     public double getSpeed(EntityId id) {
-        SpeedSnapshot snap = snapshots.get(id);
-        return snap.speed();
+        SpeedSnapshot snap = cache.get(id);
+        return snap != null ? snap.speed() : 0;
     }
 }

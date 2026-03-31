@@ -14,9 +14,9 @@ public class EntityManager <T extends Model>{
         this.carFactory = carFactory;
     }
 
-    public EntityId createEntity(T model) {
+    public EntityId createEntity(T model, String nodeId) {
         switch (model.getType()){
-            case ModelType.CARMODEL: return carFactory.createCar((CarModel) model, "A");
+            case ModelType.CARMODEL: return carFactory.createCar((CarModel) model, nodeId);
         };
         return null;
     }

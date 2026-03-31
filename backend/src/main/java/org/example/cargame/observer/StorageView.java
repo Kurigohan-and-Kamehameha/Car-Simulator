@@ -2,7 +2,11 @@ package org.example.cargame.observer;
 
 import org.example.cargame.CarModel;
 import org.example.cargame.entity.EntityId;
+import org.example.cargame.enums.ActionType;
+import org.example.cargame.events.EntityUpdateEvent;
 import org.example.cargame.snapshot.EnergyStorageSnapshot;
+import org.example.cargame.snapshot.SpeedSnapshot;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -11,10 +15,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class StorageView extends ParentView<CarModel> implements StorageObserver {
 
-    private final Map<EntityId, EnergyStorageSnapshot> snapshots = new ConcurrentHashMap<>();
+    private final Map<EntityId, EnergyStorageSnapshot> cache = new ConcurrentHashMap<>();
 
-    public StorageView(CarModel model) {
-        super(model);
+    public StorageView(CarModel model, ObserverDispatcher dispatcher) {
+        super(model, dispatcher);
 
         bind();
     }
@@ -22,39 +26,39 @@ public class StorageView extends ParentView<CarModel> implements StorageObserver
     @Override
     public void bind() {
         for (EntityId id : model.getAllEntities()) {
-            EnergyStorageSnapshot snap = model.getStorage().get(id).getSnapshot();
-            snapshots.put(id, snap);
-
-            model.getStorage().get(id).addObserver(this);
+            bind(id);
         }
     }
 
     @Override
     public void bind(EntityId id) {
         EnergyStorageSnapshot snap = model.getStorage().get(id).getSnapshot();
-        snapshots.put(id, snap);
+        cache.put(id, snap);
         model.getStorage().get(id).addObserver(this);
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
     }
 
     @Override
     public void rebind() {
-        snapshots.clear();
+        cache.clear();
         bind();
     }
 
     @Override
     public void unbind(EntityId id) {
-        snapshots.remove(id);
+        cache.remove(id);
         model.getStorage().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.REMOVE));
     }
 
     @Override
     public void update(EntityId id) {
-        snapshots.put(id, model.getStorage().get(id).getSnapshot());
+        cache.put(id, model.getStorage().get(id).getSnapshot());
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
     }
 
     public double getPower(EntityId id) {
-        EnergyStorageSnapshot snap = snapshots.get(id);
-        return snap.getPercentage100();
+        EnergyStorageSnapshot snap = cache.get(id);
+        return snap != null ? snap.getPercentage100() : 0;
     }
 }

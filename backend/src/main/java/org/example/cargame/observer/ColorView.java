@@ -1,7 +1,12 @@
 package org.example.cargame.observer;
 
 import org.example.cargame.CarModel;
+import org.example.cargame.components.ColorComponent;
 import org.example.cargame.entity.EntityId;
+import org.example.cargame.enums.ActionType;
+import org.example.cargame.events.EntityUpdateEvent;
+import org.example.cargame.snapshot.EnergyStorageSnapshot;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -9,10 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class ColorView extends ParentView<CarModel> implements ColorObserver {
-    private final Map<EntityId, String> colors = new ConcurrentHashMap<>();
+    private final Map<EntityId, String> cache = new ConcurrentHashMap<>();
 
-    public ColorView(CarModel model) {
-        super(model);
+    public ColorView(CarModel model, ObserverDispatcher dispatcher) {
+        super(model, dispatcher);
 
         bind();
     }
@@ -20,40 +25,39 @@ public class ColorView extends ParentView<CarModel> implements ColorObserver {
     @Override
     public void bind() {
         for (EntityId id : model.getAllEntities()) {
-            String color = model.getColors().get(id).getColor();
-            colors.put(id, color);
-
-            model.getColors().get(id).addObserver(this);
+            bind(id);
         }
     }
 
     @Override
     public void bind(EntityId id) {
         String color = model.getColors().get(id).getColor();
-        colors.put(id, color);//Lock weil Gameloop kann liste hinzufügen währen UI
-        // davor schon getColor aufruft damodel.getColors().get(id) bereits existiert
+        cache.put(id, color);
         model.getColors().get(id).addObserver(this);
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
     }
 
     @Override
-    public void rebind() {//Lock weil Gameloop kann clearen  währen UI getColor aufruft
-        colors.clear();
+    public void rebind() {
+        cache.clear();
         bind();
     }
 
     @Override
-    public void unbind(EntityId id) {//Lock weil Gameloop kann remove machen währen UI getColor aufruft
-        colors.remove(id);
+    public void unbind(EntityId id) {
+        cache.remove(id);
         model.getColors().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.REMOVE));
     }
 
     @Override
     public void update(EntityId id) {
-        colors.put(id, model.getColors().get(id).getColor());
+        cache.put(id, model.getColors().get(id).getColor());
+        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
     }
 
     public String getColor(EntityId id) {
-        return colors.get(id);
+        return cache.get(id) != null ? cache.get(id) : "#000000";
     }
 
 }

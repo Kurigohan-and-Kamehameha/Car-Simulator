@@ -27,101 +27,11 @@ public class CarFactory {
         this.graph = graph;
     }
 
-    public EntityId createCar(CarModel model, String text) {
-        Node startNode = graph.getNodes().stream()
-                .filter(node -> node.getType() == NodeType.WORKSHOP)
-                .findFirst()
-                .orElse(null);
-
-        EntityId carId = model.createEntity();
-
-        PositionComponent pos = new PositionComponent();
-        pos.setSnapshot(new PositionSnapshot(startNode));
-
-        SpeedComponent speed = new SpeedComponent();
-        speed.setSnapshot(new SpeedSnapshot(80));
-
-        ColorComponent color = new ColorComponent();
-        color.setColor("#FF00FF");
-
-        EngineComponent engine = engineFactory.create();
-        engine.setEngine(EngineType.FUEL);
-
-        EnergyStorageComponent storage = new EnergyStorageComponent();
-        storage.setSnapshot(
-                new EnergyStorageSnapshot(engine.getActiveEngine().capacity(), engine.getActiveEngine().capacity()));
-
-        StateComponent state = new StateComponent();
-        state.set(State.WAIT_AT_WORKSHOP);
-
-        PathComponent path = new PathComponent();
-
-        MessageComponent msg = new MessageComponent();
-        msg.setMessage(MessageType.ALERT, "");
-        msg.setMessage(MessageType.WARNING, "");
-
-        model.getPositions().put(carId, pos);
-        model.getStorage().put(carId, storage);
-        model.getSpeeds().put(carId, speed);
-        model.getColors().put(carId, color);
-        model.getEngines().put(carId, engine);
-        model.getStates().put(carId, state);
-        model.getPaths().put(carId, path);
-        model.getMessages().put(carId, msg);
-
-        return carId;
-    }
-
-    public EntityId createCar2(CarModel model) {
-        Node startNode = graph.getNodes().stream()
-                .filter(node -> node.getId().equals("K"))
-                .findFirst()
-                .orElse(null);
-
-        EntityId carId = model.createEntity();
-
-        PositionComponent pos = new PositionComponent();
-        pos.setSnapshot(new PositionSnapshot(startNode));
-
-        SpeedComponent speed = new SpeedComponent();
-        speed.setSnapshot(new SpeedSnapshot(80));
-
-        ColorComponent color = new ColorComponent();
-        color.setColor("#0000FF");
-
-        EngineComponent engine = engineFactory.create();
-        engine.setEngine(EngineType.FUEL);
-
-        EnergyStorageComponent storage = new EnergyStorageComponent();
-        storage.setSnapshot(
-                new EnergyStorageSnapshot(engine.getActiveEngine().capacity(), engine.getActiveEngine().capacity()));
-
-        StateComponent state = new StateComponent();
-        state.set(State.WAIT_AT_WORKSHOP);
-
-        PathComponent path = new PathComponent();
-
-        MessageComponent msg = new MessageComponent();
-        msg.setMessage(MessageType.ALERT, "");
-        msg.setMessage(MessageType.WARNING, "");
-
-        model.getPositions().put(carId, pos);
-        model.getStorage().put(carId, storage);
-        model.getSpeeds().put(carId, speed);
-        model.getColors().put(carId, color);
-        model.getEngines().put(carId, engine);
-        model.getStates().put(carId, state);
-        model.getPaths().put(carId, path);
-        model.getMessages().put(carId, msg);
-
-        return carId;
-    }
-
-    public EntityId createCarLater(CarModel model, String nodeId) {
+    public EntityId createCar(CarModel model, String nodeId) {
         Node startNode = graph.getNodes().stream()
                 .filter(node -> node.getId().equals(nodeId))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IllegalArgumentException("Node not found: " + nodeId));;
 
         PositionComponent pos = new PositionComponent();
         pos.setSnapshot(new PositionSnapshot(startNode));
@@ -144,7 +54,8 @@ public class CarFactory {
         MessageComponent msg = new MessageComponent();
         msg.setMessage(MessageType.ALERT, "");
         switch(Objects.requireNonNull(startNode).getType()){
-            case NodeType.WORKSHOP: state.set(State.WAIT_AT_WORKSHOP); break;
+            case NodeType.WORKSHOP: state.set(State.WAIT_AT_WORKSHOP);
+                msg.setMessage(MessageType.WARNING, ""); break;
             case NodeType.INTERSECTION: state.set(State.WAIT_AT_INTERSECTION);
                 msg.setMessage(MessageType.WARNING, "Must be at workshop to change engine or color."); break;
             case NodeType.GASSTATION: state.set(State.WAIT_AT_GASSTATION);

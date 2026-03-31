@@ -15,10 +15,9 @@ public class CarModelConfig {
     @Bean
     public CarModel createModel() {
         CarModel model = new CarModel();
-        //carFactory.createCar(model, "A");
 
-        //carFactory.createCar2(model);
-        System.out.println(model.getAllEntities());
+        carFactory.createCar(model, "A");
+
         return model;
     }
 }

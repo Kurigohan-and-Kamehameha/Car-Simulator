@@ -1,0 +1,9 @@
+-------------------------------------------------------------------------------
+Test set: org.example.cargame.CarGameFxApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 3.456 s <<< FAILURE! -- in org.example.cargame.CarGameFxApplicationTests
+org.example.cargame.CarGameFxApplicationTests.contextLoads(Graph) -- Time elapsed: 0.261 s <<< ERROR!
+org.junit.jupiter.api.extension.ParameterResolutionException: No ParameterResolver registered for parameter [org.example.cargame.graph.Graph graph] in method [void org.example.cargame.CarGameFxApplicationTests.contextLoads(org.example.cargame.graph.Graph)].
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
