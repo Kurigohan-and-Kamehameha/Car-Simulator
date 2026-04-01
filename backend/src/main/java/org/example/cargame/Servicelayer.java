@@ -34,9 +34,11 @@ public class Servicelayer {
     private final GameStateView gameStateView;
     private final EntityManager<Model> entityManager;
 
+    private EntityId playerId;
+
     private volatile boolean updateInProgress = true;
     private volatile boolean loadingCompleted = false;
-    private EntityId playerId;
+
 
     public Servicelayer(CarModel model, CommandQueue commands, Dijkstra dij, Graph graph,
                         EngineFactory engineFactory, PersistenceLayerDataBase persistenceLayerDataBase,
