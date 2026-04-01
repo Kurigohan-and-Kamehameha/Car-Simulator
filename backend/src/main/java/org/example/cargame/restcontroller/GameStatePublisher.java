@@ -5,7 +5,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -24,10 +23,9 @@ public class GameStatePublisher {
     public void publishGameState() {
         Map<Integer, GameStateDTO> snapshot = gameRestController.getAllGameStates();
 
-        if (!gameRestController.getLoadingCompete() || gameRestController.getUpdateInProgress()) return;
+        if (!gameRestController.getLoadingCompete() || gameRestController.getUpdateInProgress())
+            return;
 
-        snapshot.forEach((id, state) -> {
-            messagingTemplate.convertAndSend("/topic/game", state);
-        });
+        snapshot.forEach((id, state) -> messagingTemplate.convertAndSend("/topic/game", state));
     }
 }

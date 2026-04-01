@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CarModel extends Model{
+public class CarModel extends Model {
     private final Map<EntityId, PositionComponent> positions = new ConcurrentHashMap<>();
     private final Map<EntityId, EnergyStorageComponent> storage = new ConcurrentHashMap<>();
     private final Map<EntityId, ColorComponent> colors = new ConcurrentHashMap<>();
@@ -17,8 +17,6 @@ public class CarModel extends Model{
     private final Map<EntityId, SpeedComponent> speeds = new ConcurrentHashMap<>();
     private final Map<EntityId, PathComponent> paths = new ConcurrentHashMap<>();
     private final Map<EntityId, MessageComponent> messages = new ConcurrentHashMap<>();
-
-    private EntityId playerId;
 
     @Override
     public void removeEntity(EntityId id) {

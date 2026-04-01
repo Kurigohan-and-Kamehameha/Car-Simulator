@@ -157,14 +157,14 @@ public class Servicelayer {
         return updateInProgress;
     }
 
-    public void save(String path) {
+    public void save() {
         SnapshotBuilder snapshotBuilder = new SnapshotBuilder();
         LoadedGameData data = snapshotBuilder.build(model);
-        persistenceLayerDataBase.save(path, data);
+        persistenceLayerDataBase.save(data);
     }
 
-    public void load(String path) {
-        LoadedGameData  data = persistenceLayerDataBase.load(path);
+    public void load() {
+        LoadedGameData  data = persistenceLayerDataBase.load();
         commands.submit(() -> {
             if(data == null) {
                 return;

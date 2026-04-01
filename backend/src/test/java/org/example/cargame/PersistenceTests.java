@@ -49,8 +49,8 @@ class PersistenceTests {
         SnapshotBuilder builder = new SnapshotBuilder();
         LoadedGameData data = builder.build(model);
 
-        persistence.save("test", data);
-        LoadedGameData loaded = persistence.load("test");
+        persistence.save(data);
+        LoadedGameData loaded = persistence.load();
 
         GameLoader loader = new GameLoader();
 

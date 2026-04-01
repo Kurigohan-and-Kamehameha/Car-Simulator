@@ -2,7 +2,6 @@ package org.example.cargame.restcontroller;
 
 import org.example.cargame.enums.EngineType;
 import org.example.cargame.Servicelayer;
-import org.example.cargame.enums.State;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.snapshot.GameStateDTO;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -47,23 +45,23 @@ public class GameRestController {
 
     @PostMapping("/save")
     public void save(@RequestParam String path) {
-        servicelayer.save(path);
+        servicelayer.save();
     }
 
     @PostMapping("/load")
     public void load(@RequestParam String path) {
-        servicelayer.load(path);
+        servicelayer.load();
     }
 
     public Map<Integer, GameStateDTO> getAllGameStates() {
         return servicelayer.getAllGameStates();
     }
 
-    public boolean getLoadingCompete(){
+    public boolean getLoadingCompete() {
         return servicelayer.getLoadingCompete();
     }
 
-    public boolean getUpdateInProgress(){
+    public boolean getUpdateInProgress() {
         return servicelayer.getUpdateInProgress();
     }
 

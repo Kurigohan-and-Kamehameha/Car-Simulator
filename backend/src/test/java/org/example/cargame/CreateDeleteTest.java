@@ -2,7 +2,6 @@ package org.example.cargame;
 
 import org.example.cargame.graph.Graph;
 import org.example.cargame.graph.Node;
-import org.example.cargame.observer.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

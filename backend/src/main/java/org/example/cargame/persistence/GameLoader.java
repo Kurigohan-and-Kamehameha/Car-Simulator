@@ -4,17 +4,12 @@ import org.example.cargame.CarModel;
 import org.example.cargame.components.*;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.factories.EngineFactory;
-import org.example.cargame.snapshot.PathSnapshot;
-
-import java.util.ArrayList;
 
 public class GameLoader {
 
     public void apply(LoadedGameData data, CarModel model, EngineFactory engineFactory) {
 
-        data.speeds.forEach((id, snap) -> {
-            model.removeEntity(id);
-        });
+        data.speeds.forEach((id, snap) -> model.removeEntity(id));
 
         data.speeds.forEach((id, snap) -> {
             SpeedComponent comp = new SpeedComponent();

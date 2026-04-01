@@ -1,7 +1,6 @@
 package org.example.cargame.persistence;
 
 import jakarta.transaction.Transactional;
-import org.example.cargame.components.*;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.EngineType;
 import org.example.cargame.enums.MessageType;
@@ -30,9 +29,9 @@ public class PersistenceLayerDataBase {
     private final EnergyStorageComponentRepository energyRepo;
 
     public PersistenceLayerDataBase(Graph graph, StateComponentRepository stateRepo, SpeedComponentRepository speedRepo,
-                                    PositionComponentRepository positionRepo, ColorComponentRepository colorRepo,
-                                    EngineComponentRepository engineRepo, PathComponentRepository pathRepo,
-                                    MessageComponentRepository messageRepo, EnergyStorageComponentRepository energyRepo) {
+            PositionComponentRepository positionRepo, ColorComponentRepository colorRepo,
+            EngineComponentRepository engineRepo, PathComponentRepository pathRepo,
+            MessageComponentRepository messageRepo, EnergyStorageComponentRepository energyRepo) {
         this.graph = graph;
         this.stateRepo = stateRepo;
         this.speedRepo = speedRepo;
@@ -45,7 +44,7 @@ public class PersistenceLayerDataBase {
     }
 
     @Transactional
-    public void save(String folderPath, LoadedGameData data){
+    public void save(LoadedGameData data) {
         data.states.forEach((id, state) -> {
             StateComponentEntity entity = new StateComponentEntity();
             entity.setId((long) id.getId());
@@ -66,10 +65,10 @@ public class PersistenceLayerDataBase {
             entity.setX(snap.x());
             entity.setY(snap.y());
             entity.setEdgeProgress(snap.edgeProgress());
-            if(snap.currentEdge() != null) {
+            if (snap.currentEdge() != null) {
                 entity.setCurrentEdgeFromId(snap.currentEdge().getFrom().getId());
                 entity.setCurrentEdgeToId(snap.currentEdge().getTo().getId());
-            } else if(snap.currentNode() != null) {
+            } else if (snap.currentNode() != null) {
                 entity.setCurrentNodeId(snap.currentNode().getId());
             }
             positionRepo.save(entity);
@@ -97,11 +96,9 @@ public class PersistenceLayerDataBase {
             PathComponentEntity entity = new PathComponentEntity();
             entity.setId((long) id.getId());
             entity.setEdgeIdsFrom(
-                    snap.path().stream().map(e -> e.getFrom().getId()).toList()
-            );
+                    snap.path().stream().map(e -> e.getFrom().getId()).toList());
             entity.setEdgeIdsTo(
-                    snap.path().stream().map(e -> e.getTo().getId()).toList()
-            );
+                    snap.path().stream().map(e -> e.getTo().getId()).toList());
             entity.setCurrentEdgeIndex(snap.getCurrentEdgeIndex());
 
             pathRepo.save(entity);
@@ -130,7 +127,7 @@ public class PersistenceLayerDataBase {
     }
 
     @Transactional
-    public LoadedGameData load(String folderPath) {
+    public LoadedGameData load() {
         if (!(stateRepo.count() > 0)) {
             return null;
         }
@@ -155,16 +152,14 @@ public class PersistenceLayerDataBase {
                         new Edge(from, to),
                         entity.getEdgeProgress(),
                         entity.getX(),
-                        entity.getY()
-                );
+                        entity.getY());
             } else {
                 snapshot = new PositionSnapshot(
                         graph.getNodeById(entity.getCurrentNodeId()),
                         null,
                         0,
                         entity.getX(),
-                        entity.getY()
-                );
+                        entity.getY());
             }
 
             data.positions.put(id, snapshot);

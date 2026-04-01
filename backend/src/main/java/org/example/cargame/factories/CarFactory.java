@@ -1,7 +1,6 @@
 package org.example.cargame.factories;
 
 import org.example.cargame.CarModel;
-import org.example.cargame.Model;
 import org.example.cargame.components.*;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.EngineType;
@@ -31,7 +30,7 @@ public class CarFactory {
         Node startNode = graph.getNodes().stream()
                 .filter(node -> node.getId().equals(nodeId))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Node not found: " + nodeId));;
+                .orElseThrow(() -> new IllegalArgumentException("Node not found: " + nodeId));
 
         PositionComponent pos = new PositionComponent();
         pos.setSnapshot(new PositionSnapshot(startNode));
@@ -53,13 +52,19 @@ public class CarFactory {
 
         MessageComponent msg = new MessageComponent();
         msg.setMessage(MessageType.ALERT, "");
-        switch(Objects.requireNonNull(startNode).getType()){
-            case NodeType.WORKSHOP: state.set(State.WAIT_AT_WORKSHOP);
-                msg.setMessage(MessageType.WARNING, ""); break;
-            case NodeType.INTERSECTION: state.set(State.WAIT_AT_INTERSECTION);
-                msg.setMessage(MessageType.WARNING, "Must be at workshop to change engine or color."); break;
-            case NodeType.GASSTATION: state.set(State.WAIT_AT_GASSTATION);
-                msg.setMessage(MessageType.WARNING, "Must be at workshop to change engine or color."); break;
+        switch (Objects.requireNonNull(startNode).getType()) {
+            case NodeType.WORKSHOP:
+                state.set(State.WAIT_AT_WORKSHOP);
+                msg.setMessage(MessageType.WARNING, "");
+                break;
+            case NodeType.INTERSECTION:
+                state.set(State.WAIT_AT_INTERSECTION);
+                msg.setMessage(MessageType.WARNING, "Must be at workshop to change engine or color.");
+                break;
+            case NodeType.GASSTATION:
+                state.set(State.WAIT_AT_GASSTATION);
+                msg.setMessage(MessageType.WARNING, "Must be at workshop to change engine or color.");
+                break;
         }
 
         PathComponent path = new PathComponent();
