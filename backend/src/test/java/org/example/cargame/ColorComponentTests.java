@@ -23,7 +23,7 @@ class ColorComponentTests {
         assertEquals("red", component.getColor());
 
         component.setColor("blue");
-        assertEquals("green", component.getColor());
+        assertEquals("blue", component.getColor());
     }
 
     @Test
