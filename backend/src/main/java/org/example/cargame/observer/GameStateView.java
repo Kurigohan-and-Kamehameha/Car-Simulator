@@ -1,7 +1,6 @@
 package org.example.cargame.observer;
 
 import org.example.cargame.entity.EntityId;
-import org.example.cargame.enums.ActionType;
 import org.example.cargame.snapshot.GameStateDTO;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class GameStateView {
+public class GameStateView implements Observer{
     private final Map<EntityId, GameStateDTO> cache = new ConcurrentHashMap<>();
 
     private final PositionView positionView;
@@ -27,8 +26,7 @@ public class GameStateView {
             StorageView storageView,
             EngineView engineView,
             ColorView colorView,
-            MessageView messageView,
-            ObserverDispatcher dispatcher
+            MessageView messageView
     ) {
         this.positionView = positionView;
         this.stateView = stateView;
@@ -37,6 +35,14 @@ public class GameStateView {
         this.engineView = engineView;
         this.colorView = colorView;
         this.messageView = messageView;
+
+        positionView.addObserver(this);
+        stateView.addObserver(this);
+        speedView.addObserver(this);
+        storageView.addObserver(this);
+        engineView.addObserver(this);
+        colorView.addObserver(this);
+        messageView.addObserver(this);
     }
 
     public GameStateDTO get(EntityId id) {
@@ -47,14 +53,8 @@ public class GameStateView {
         return Map.copyOf(cache);
     }
 
-    public void handleUpdateFromDispatcher(EntityId id, ActionType action) {
-        switch (action) {
-            case UPDATE -> updateEntity(id);
-            case REMOVE -> cache.remove(id);
-        }
-    }
-
-    public void updateEntity(EntityId id) {
+    @Override
+    public void update(EntityId id) {
         GameStateDTO dto = new GameStateDTO(
                 positionView.getPositionX(id),
                 positionView.getPositionY(id),
@@ -72,4 +72,8 @@ public class GameStateView {
     public void remove(EntityId id) {
         cache.remove(id);
     }
+    public void clear() {
+        cache.clear();
+    }
+
 }

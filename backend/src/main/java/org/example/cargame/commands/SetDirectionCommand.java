@@ -2,7 +2,6 @@ package org.example.cargame.commands;
 
 import org.example.cargame.CarModel;
 import org.example.cargame.Dijkstra;
-import org.example.cargame.Model;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.MessageType;
 import org.example.cargame.enums.NodeType;
@@ -10,7 +9,6 @@ import org.example.cargame.enums.State;
 import org.example.cargame.graph.Edge;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.graph.Node;
-import org.example.cargame.observer.ObserverDispatcher;
 import org.example.cargame.snapshot.PathSnapshot;
 
 import java.util.List;
@@ -19,21 +17,18 @@ public class SetDirectionCommand implements Command {
     private final CarModel model;
     private final Dijkstra dij;
     private final Graph graph;
-    private final ObserverDispatcher dispatcher;
 
     private final EntityId playerId;
     private final String targetId;
 
     public SetDirectionCommand(CarModel model,
-            Dijkstra dij,
-            Graph graph,
-            ObserverDispatcher dispatcher,
-            EntityId playerId,
-            String targetId) {
+                               Dijkstra dij,
+                               Graph graph,
+                               EntityId playerId,
+                               String targetId) {
         this.model = model;
         this.dij = dij;
         this.graph = graph;
-        this.dispatcher = dispatcher;
         this.playerId = playerId;
         this.targetId = targetId;
     }
@@ -59,7 +54,7 @@ public class SetDirectionCommand implements Command {
                     if (currentPower < weight) {
                         model.getMessages().get(playerId)
                                 .setMessage(MessageType.ALERT, "Not enough Power to reach target");
-                        dispatcher.dispatch(() -> model.getMessages().get(playerId).notifyObservers(playerId));
+                        model.getMessages().get(playerId).notifyObservers(playerId);
                         return;
                     }
                     currentPower -= weight;
@@ -86,7 +81,7 @@ public class SetDirectionCommand implements Command {
                 if (currentPower < minDistanceToGas) {
                     model.getMessages().get(playerId)
                             .setMessage(MessageType.ALERT, "Not enough Power to reach next gas station after target");
-                    dispatcher.dispatch(() -> model.getMessages().get(playerId).notifyObservers(playerId));
+                    model.getMessages().get(playerId).notifyObservers(playerId);
                     return;
                 }
 
@@ -96,10 +91,10 @@ public class SetDirectionCommand implements Command {
                 model.getMessages().get(playerId).setMessage(MessageType.WARNING,
                         "Must be at workshop to change engine or color.");
                 model.getMessages().get(playerId).setMessage(MessageType.ALERT, "");
-                dispatcher.dispatch(() -> {
-                    model.getStates().get(playerId).notifyObservers(playerId);
-                    model.getMessages().get(playerId).notifyObservers(playerId);
-                });
+
+                model.getStates().get(playerId).notifyObservers(playerId);
+                model.getMessages().get(playerId).notifyObservers(playerId);
+
             }
         }
     }

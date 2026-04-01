@@ -6,7 +6,6 @@ import org.example.cargame.engine.Engine;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.EngineType;
 import org.example.cargame.enums.State;
-import org.example.cargame.factories.CarFactory;
 import org.example.cargame.factories.EngineFactory;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.observer.*;
@@ -18,17 +17,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
 public class Servicelayer {
-
     private final CarModel model;
     private final CommandQueue commands;
-    private final ObserverDispatcher dispatcher;
     private final Dijkstra dij;
     private final Graph graph;
     private final EngineFactory engineFactory;
@@ -42,11 +38,10 @@ public class Servicelayer {
     private volatile boolean loadingCompleted = false;
     private EntityId playerId;
 
-    public Servicelayer(CarModel model, CommandQueue commands, ObserverDispatcher dispatcher, Dijkstra dij, Graph graph,
+    public Servicelayer(CarModel model, CommandQueue commands, Dijkstra dij, Graph graph,
                         EngineFactory engineFactory, PersistenceLayerDataBase persistenceLayerDataBase,
                         List<ParentView<CarModel>> views, GameStateView gameStateView, EntityManager<Model> entityManager) {
         this.commands = commands;
-        this.dispatcher = dispatcher;
         this.model = model;
         this.dij = dij;
         this.graph = graph;
@@ -96,6 +91,7 @@ public class Servicelayer {
             try {
                 updateInProgress = true;
                 views.forEach(view -> view.unbind(playerId));
+                gameStateView.remove(playerId);
                 entityManager.removeEntity(model, playerId);
                 future.complete(null);
             } catch (Exception e) {
@@ -114,7 +110,7 @@ public class Servicelayer {
 
     public void setDirection(String targetId) {
         commands.submit(new SetDirectionCommand(
-                model, dij, graph, dispatcher, playerId, targetId));
+                model, dij, graph, playerId, targetId));
     }
 
     public void setColor(String color) {
@@ -127,9 +123,7 @@ public class Servicelayer {
     }
 
     public void setSpeed(double speed) {
-        commands.submit(() -> {
-            model.getSpeeds().get(playerId).setSnapshot(new SpeedSnapshot(speed));
-        });
+        commands.submit(() -> model.getSpeeds().get(playerId).setSnapshot(new SpeedSnapshot(speed)));
     }
 
     public void setEngine(EngineType engineType) {
@@ -177,6 +171,7 @@ public class Servicelayer {
             }
             loadingCompleted = false;
             loader.apply(data, model, engineFactory);
+            gameStateView.clear();
             views.forEach(ParentView::rebind);
             loadingCompleted = true;
         });

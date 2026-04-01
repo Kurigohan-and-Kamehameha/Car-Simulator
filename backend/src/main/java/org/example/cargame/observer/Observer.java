@@ -4,6 +4,4 @@ import org.example.cargame.entity.EntityId;
 
 public interface Observer {
     void update(EntityId id);
-    void bind();
-    void rebind();
 }

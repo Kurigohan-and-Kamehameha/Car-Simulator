@@ -6,8 +6,8 @@ import org.example.cargame.observer.Observer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Subject {
-    private final List<Observer> observers = new CopyOnWriteArrayList<Observer>();
+public abstract class Subject {
+    private final List<Observer> observers = new CopyOnWriteArrayList<>();
 
     public void addObserver(Observer obs) {
         observers.add(obs);

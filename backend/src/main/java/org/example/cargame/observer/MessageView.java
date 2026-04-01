@@ -3,11 +3,7 @@ package org.example.cargame.observer;
 import org.example.cargame.CarModel;
 import org.example.cargame.components.MessageComponent;
 import org.example.cargame.entity.EntityId;
-import org.example.cargame.enums.ActionType;
 import org.example.cargame.enums.MessageType;
-import org.example.cargame.events.EntityUpdateEvent;
-import org.example.cargame.snapshot.EnergyStorageSnapshot;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -38,7 +34,7 @@ public class MessageView extends ParentView<CarModel> implements MessageObserver
         map.put(MessageType.WARNING, msgComponent.getMessage(MessageType.WARNING));
         cache.put(id, map);
         msgComponent.addObserver(this);
-        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
+        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -51,7 +47,7 @@ public class MessageView extends ParentView<CarModel> implements MessageObserver
     public void unbind(EntityId id) {
         cache.remove(id);
         model.getMessages().get(id).removeObserver(this);
-        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.REMOVE));
+        //dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -61,7 +57,7 @@ public class MessageView extends ParentView<CarModel> implements MessageObserver
                 .put(MessageType.ALERT, msgComponent.getMessage(MessageType.ALERT));
         cache.get(id)
                 .put(MessageType.WARNING, msgComponent.getMessage(MessageType.WARNING));
-        dispatcher.dispatch(() -> GameStateRegistry.notify(id, ActionType.UPDATE));
+        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     public String alert(EntityId id) {

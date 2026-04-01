@@ -1,9 +1,11 @@
 package org.example.cargame.observer;
 
 import org.example.cargame.Model;
-import org.example.cargame.entity.EntityId;
+import org.example.cargame.subject.ViewSubject;
+import org.springframework.stereotype.Component;
 
-public abstract class ParentView<T extends Model>{
+@Component
+public abstract class ParentView<T extends Model> extends ViewSubject implements Bindable{
     protected final T model;
     protected final ObserverDispatcher dispatcher;
 
@@ -12,8 +14,4 @@ public abstract class ParentView<T extends Model>{
         this.dispatcher = dispatcher;
     }
 
-    public abstract void bind();
-    public abstract void bind(EntityId id);
-    public abstract void rebind();
-    public abstract void unbind(EntityId id);
 }

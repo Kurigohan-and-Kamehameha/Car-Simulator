@@ -28,7 +28,6 @@ C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\carg
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\enums\ModelType.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\enums\NodeType.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\enums\State.java
-C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\events\EntityUpdateEvent.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\factories\CarFactory.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\factories\EngineFactory.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\GameLoop.java
@@ -36,11 +35,11 @@ C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\carg
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\graph\Graph.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\graph\Node.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\Model.java
+C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\Bindable.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\ColorObserver.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\ColorView.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\EngineObserver.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\EngineView.java
-C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\GameStateRegistry.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\GameStateView.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\MessageObserver.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\observer\MessageView.java
@@ -90,4 +89,6 @@ C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\carg
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\snapshot\PathSnapshot.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\snapshot\PositionSnapshot.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\snapshot\SpeedSnapshot.java
+C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\subject\ComponentSubject.java
 C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\subject\Subject.java
+C:\Users\Admin\IdeaProjects\Car-Simulator\backend\src\main\java\org\example\cargame\subject\ViewSubject.java
