@@ -8,3 +8,19 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+
+# Maven target
+/target/
+# IDE files
+/.idea/
+/*.iml
+# Logs
+*.log
+
+# Node modules
+/node_modules/
+# Vite / build output
+/dist/
+/build/
+# Logs
+*.log
