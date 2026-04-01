@@ -45,35 +45,17 @@ const ControlPanel = ({ gameState }) => {
 
   const handleSave = async () => {
     try {
-      if (window.showSaveFilePicker) {
-        const handle = await window.showSaveFilePicker({
-          suggestedName: 'game-save.json',
-          types: [{ description: 'JSON File', accept: { 'application/json': ['.json'] } }],
-        });
-        await saveGame(handle.name);
-      } else {
-        const fileName = prompt("Enter file name to save as:", "game-save.json");
-        if (fileName) await saveGame(fileName);
-      }
+      await saveGame('game-save.json');
     } catch (err) {
-      if (err.name !== 'AbortError') console.error("Failed to save", err);
+      console.error("Failed to save", err);
     }
   };
 
   const handleLoad = async () => {
     try {
-      if (window.showOpenFilePicker) {
-        const [handle] = await window.showOpenFilePicker({
-          types: [{ description: 'JSON File', accept: { 'application/json': ['.json'] } }],
-          multiple: false
-        });
-        await loadGame(handle.name);
-      } else {
-        const fileName = prompt("Enter file name to load:", "game-save.json");
-        if (fileName) await loadGame(fileName);
-      }
+      await loadGame('game-save.json');
     } catch (err) {
-      if (err.name !== 'AbortError') console.error("Failed to load", err);
+      console.error("Failed to load", err);
     }
   };
 
