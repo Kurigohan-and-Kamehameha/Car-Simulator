@@ -45,7 +45,6 @@ public class EngineView extends ParentView<CarModel> implements EngineObserver {
     public void unbind(EntityId id) {
         cache.remove(id);
         model.getEngines().get(id).removeObserver(this);
-        //dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override

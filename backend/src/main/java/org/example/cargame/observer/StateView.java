@@ -43,7 +43,6 @@ public class StateView extends ParentView<CarModel> implements StateObserver {
     public void unbind(EntityId id) {
         cache.remove(id);
         model.getStates().get(id).removeObserver(this);
-        //dispatcher.dispatch(() -> super.notifyObservers(id, ActionType.REMOVE));
     }
 
     @Override
@@ -53,6 +52,6 @@ public class StateView extends ParentView<CarModel> implements StateObserver {
     }
 
     public State getState(EntityId id) {
-        return cache.get(id);
+        return cache.get(id) != null ? cache.get(id) : State.WAIT_AT_WORKSHOP;
     }
 }

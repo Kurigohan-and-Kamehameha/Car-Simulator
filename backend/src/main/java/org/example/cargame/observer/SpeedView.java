@@ -43,7 +43,6 @@ public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
     public void unbind(EntityId id) {
         cache.remove(id);
         model.getSpeeds().get(id).removeObserver(this);
-        //dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override

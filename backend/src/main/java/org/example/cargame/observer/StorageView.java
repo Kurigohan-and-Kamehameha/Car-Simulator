@@ -44,7 +44,6 @@ public class StorageView extends ParentView<CarModel> implements StorageObserver
     public void unbind(EntityId id) {
         cache.remove(id);
         model.getStorage().get(id).removeObserver(this);
-        //dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override

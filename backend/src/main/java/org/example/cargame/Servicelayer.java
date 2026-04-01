@@ -90,8 +90,8 @@ public class Servicelayer {
         commands.submit(() -> {
             try {
                 updateInProgress = true;
-                views.forEach(view -> view.unbind(playerId));
                 gameStateView.remove(playerId);
+                views.forEach(view -> view.unbind(playerId));
                 entityManager.removeEntity(model, playerId);
                 future.complete(null);
             } catch (Exception e) {

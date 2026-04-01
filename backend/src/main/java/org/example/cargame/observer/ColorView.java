@@ -42,7 +42,6 @@ public class ColorView extends ParentView<CarModel> implements ColorObserver {
     public void unbind(EntityId id) {
         cache.remove(id);
         model.getColors().get(id).removeObserver(this);
-        //dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override

@@ -47,7 +47,6 @@ public class MessageView extends ParentView<CarModel> implements MessageObserver
     public void unbind(EntityId id) {
         cache.remove(id);
         model.getMessages().get(id).removeObserver(this);
-        //dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
