@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
@@ -27,6 +25,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+
+      - name: Create SQLite DB folder and file
+        run: |
+          mkdir -p backend/data
+          touch backend/data/carGame.sqlite
 
       - name: Build and Test
         run: mvn clean verify
