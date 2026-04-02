@@ -1,12 +1,12 @@
 package org.example.cargame.components;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.example.cargame.enums.MessageType;
 
 public class MessageComponent extends Component {
-    private final HashMap<MessageType, String> messages = new HashMap<MessageType, String>();
+    private final Map<MessageType, String> messages = new ConcurrentHashMap<>();
 
     public String getMessage(MessageType type) {
         return messages.get(type);

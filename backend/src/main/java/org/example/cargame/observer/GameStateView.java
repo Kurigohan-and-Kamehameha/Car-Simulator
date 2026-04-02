@@ -2,13 +2,14 @@ package org.example.cargame.observer;
 
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.snapshot.GameStateDTO;
+import org.example.cargame.snapshot.PositionSnapshot;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class GameStateView implements Observer{
+public class GameStateView implements Observer {
     private final Map<EntityId, GameStateDTO> cache = new ConcurrentHashMap<>();
 
     private final PositionView positionView;
@@ -26,8 +27,7 @@ public class GameStateView implements Observer{
             StorageView storageView,
             EngineView engineView,
             ColorView colorView,
-            MessageView messageView
-    ) {
+            MessageView messageView) {
         this.positionView = positionView;
         this.stateView = stateView;
         this.speedView = speedView;
@@ -55,23 +55,29 @@ public class GameStateView implements Observer{
 
     @Override
     public void update(EntityId id) {
+        PositionSnapshot snapPos = positionView.getPosition(id);
+
+        if (snapPos == null) {
+            return;
+        }
+
         GameStateDTO dto = new GameStateDTO(
-                positionView.getPositionX(id),
-                positionView.getPositionY(id),
+                snapPos.x(),
+                snapPos.y(),
                 colorView.getColor(id),
                 engineView.getEngineType(id),
                 storageView.getPower(id),
                 stateView.getState(id),
                 messageView.alert(id),
                 messageView.warning(id),
-                speedView.getSpeed(id)
-        );
+                speedView.getSpeed(id));
         cache.put(id, dto);
     }
 
     public void remove(EntityId id) {
         cache.remove(id);
     }
+
     public void clear() {
         cache.clear();
     }

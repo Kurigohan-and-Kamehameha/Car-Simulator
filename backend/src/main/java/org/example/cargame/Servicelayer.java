@@ -34,15 +34,14 @@ public class Servicelayer {
     private final GameStateView gameStateView;
     private final EntityManager<Model> entityManager;
 
-    private EntityId playerId;
+    private volatile EntityId playerId;
 
     private volatile boolean updateInProgress = true;
     private volatile boolean loadingCompleted = false;
 
-
     public Servicelayer(CarModel model, CommandQueue commands, Dijkstra dij, Graph graph,
-                        EngineFactory engineFactory, PersistenceLayerDataBase persistenceLayerDataBase,
-                        List<ParentView<CarModel>> views, GameStateView gameStateView, EntityManager<Model> entityManager) {
+            EngineFactory engineFactory, PersistenceLayerDataBase persistenceLayerDataBase,
+            List<ParentView<CarModel>> views, GameStateView gameStateView, EntityManager<Model> entityManager) {
         this.commands = commands;
         this.model = model;
         this.dij = dij;
@@ -65,7 +64,7 @@ public class Servicelayer {
         loadingCompleted = true;
     }
 
-    public void createEntity(String nodeId){
+    public void createEntity(String nodeId) {
         CompletableFuture<EntityId> future = new CompletableFuture<>();
         commands.submit(() -> {
             try {
@@ -87,7 +86,7 @@ public class Servicelayer {
         }
     }
 
-    public void removeEntity(int id){
+    public void removeEntity(int id) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         commands.submit(() -> {
             try {
@@ -151,24 +150,26 @@ public class Servicelayer {
                 .toList();
     }
 
-    public boolean getLoadingCompete(){
+    public boolean getLoadingCompete() {
         return loadingCompleted;
     }
 
-    public boolean getUpdateInProgress(){
+    public boolean getUpdateInProgress() {
         return updateInProgress;
     }
 
     public void save() {
-        SnapshotBuilder snapshotBuilder = new SnapshotBuilder();
-        LoadedGameData data = snapshotBuilder.build(model);
-        persistenceLayerDataBase.save(data);
+        commands.submit(() -> {
+            SnapshotBuilder snapshotBuilder = new SnapshotBuilder();
+            LoadedGameData data = snapshotBuilder.build(model);
+            persistenceLayerDataBase.save(data);
+        });
     }
 
     public void load() {
-        LoadedGameData  data = persistenceLayerDataBase.load();
+        LoadedGameData data = persistenceLayerDataBase.load();
         commands.submit(() -> {
-            if(data == null) {
+            if (data == null) {
                 return;
             }
             loadingCompleted = false;
@@ -183,7 +184,6 @@ public class Servicelayer {
         return gameStateView.getAll().entrySet().stream()
                 .collect(Collectors.toMap(
                         e -> e.getKey().getId(),
-                        Map.Entry::getValue
-                ));
+                        Map.Entry::getValue));
     }
 }

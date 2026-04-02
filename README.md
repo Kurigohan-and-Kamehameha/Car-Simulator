@@ -1,4 +1,4 @@
-# Car Game Multi-Project# 🚗 Car Simulation Engine – Real-Time MVC/ECS Architecture
+# 🚗 Car Simulation Engine – Real-Time MVC/ECS Architecture
 
 A modular, event-driven car simulation system built with **Spring Boot (backend)** and **React (frontend)**.  
 This project focuses on **real-time updates, concurrency, and scalable architecture design**, going beyond typical CRUD applications.
@@ -7,7 +7,7 @@ This project focuses on **real-time updates, concurrency, and scalable architect
 
 ## 🧠 Architecture & Design
 
-### MVC + ECS Hybrid
+### MVC + ECS
 - Clear separation of concerns using **Model-View-Controller**
 - Entity-based design (ECS-inspired) for flexible and scalable object management
 
@@ -63,7 +63,7 @@ This project focuses on **real-time updates, concurrency, and scalable architect
 - **Pathfinding using Dijkstra Algorithm**
 - Graph-based movement system with interactive nodes
 - Dynamic entity lifecycle:
-    - Create / remove entities at runtime
+    - Create / remove entities at runtime (only in backend yet)
 - Real-time updates of:
     - Position
     - Speed

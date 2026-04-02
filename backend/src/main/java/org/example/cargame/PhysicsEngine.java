@@ -63,9 +63,10 @@ public class PhysicsEngine {
                 currentIndex++;
                 if (currentIndex < path.size()) {
                     edge = path.get(currentIndex);
-                    if(edge.getFrom().getType().equals(NodeType.GASSTATION)) {
+                    if (edge.getFrom().getType().equals(NodeType.GASSTATION)) {
                         EnergyStorageSnapshot snap = model.getStorage().get(id).getSnapshot();
-                        model.getStorage().get(id).setSnapshot(new EnergyStorageSnapshot(snap.capacity(), snap.capacity()));
+                        model.getStorage().get(id)
+                                .setSnapshot(new EnergyStorageSnapshot(snap.capacity(), snap.capacity()));
                     }
                     newProgress = 0.0;
 
@@ -109,11 +110,21 @@ public class PhysicsEngine {
 
     public void notifyObservers() {
         for (EntityId id : model.getAllEntities()) {
-            model.getPositions().get(id).notifyObservers(id);
-            model.getStates().get(id).notifyObservers(id);
-            model.getSpeeds().get(id).notifyObservers(id);
-            model.getMessages().get(id).notifyObservers(id);
-            model.getStorage().get(id).notifyObservers(id);
+            var pos = model.getPositions().get(id);
+            var state = model.getStates().get(id);
+            var speed = model.getSpeeds().get(id);
+            var messages = model.getMessages().get(id);
+            var storage = model.getStorage().get(id);
+
+            if (pos == null || state == null || speed == null || messages == null || storage == null) {
+                continue;
+            }
+
+            pos.notifyObservers(id);
+            state.notifyObservers(id);
+            speed.notifyObservers(id);
+            messages.notifyObservers(id);
+            storage.notifyObservers(id);
         }
     }
 }

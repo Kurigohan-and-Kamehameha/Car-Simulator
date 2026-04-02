@@ -19,9 +19,9 @@ public class DemoRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String @NonNull ... args) throws Exception {
+    public void run(String @NonNull ... args) {
         PhysicsEngine physics = new PhysicsEngine(model);
-        GameLoop loop = new GameLoop(physics, commands, dispatcher);
+        GameLoop loop = new GameLoop(physics, commands);
 
         Thread observerThread = new Thread(dispatcher, "ObserverThread");
         observerThread.setDaemon(true);

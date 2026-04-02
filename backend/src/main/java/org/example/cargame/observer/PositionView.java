@@ -51,13 +51,8 @@ public class PositionView extends ParentView<CarModel> implements PositionObserv
         dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
-    public double getPositionX(EntityId id) {
-        PositionSnapshot snap = cache.get(id);
-        return snap != null ? snap.x() : 0;
+    public PositionSnapshot getPosition(EntityId id) {
+        return cache.get(id);
     }
 
-    public double getPositionY(EntityId id) {
-        PositionSnapshot snap = cache.get(id);
-        return snap != null ? snap.y() : 0;
-    }
 }

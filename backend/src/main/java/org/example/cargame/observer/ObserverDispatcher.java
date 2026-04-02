@@ -19,7 +19,11 @@ public class ObserverDispatcher implements Runnable{
         while(!Thread.currentThread().isInterrupted()){
             try{
                 Runnable task = queue.take();
-                task.run();
+                try {
+                    task.run();
+                } catch (Exception e) {
+                    System.err.println("Exception in ObserverThread task: " + e.getMessage());
+                }
             }catch (InterruptedException e){
                 Thread.currentThread().interrupt();
             }
