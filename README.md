@@ -1,4 +1,4 @@
-# 🚗 Car Simulation Engine – Real-Time MVC/ECS Architecture
+# 🚗 Car Simulation Engine – Real-Time MVC/ECS Architecture - Double-layered Hybrid Push-Pull Observer Pattern
 
 A modular, event-driven car simulation system built with **Spring Boot (backend)** and **React (frontend)**.  
 This project focuses on **real-time updates, concurrency, and scalable architecture design**, going beyond typical CRUD applications.
