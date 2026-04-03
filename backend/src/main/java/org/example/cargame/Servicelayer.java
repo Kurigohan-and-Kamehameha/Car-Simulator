@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +31,7 @@ public class Servicelayer {
     private final List<ParentView<CarModel>> views;
     private final GameStateView gameStateView;
     private final EntityManager<Model> entityManager;
+    private final ObserverDispatcher dispatcher;
 
     private volatile EntityId playerId;
 
@@ -41,7 +40,8 @@ public class Servicelayer {
 
     public Servicelayer(CarModel model, CommandQueue commands, Dijkstra dij, Graph graph,
             EngineFactory engineFactory, PersistenceLayerDataBase persistenceLayerDataBase,
-            List<ParentView<CarModel>> views, GameStateView gameStateView, EntityManager<Model> entityManager) {
+            List<ParentView<CarModel>> views, GameStateView gameStateView, EntityManager<Model> entityManager,
+            ObserverDispatcher dispatcher) {
         this.commands = commands;
         this.model = model;
         this.dij = dij;
@@ -52,6 +52,7 @@ public class Servicelayer {
         this.gameStateView = gameStateView;
         this.entityManager = entityManager;
         this.loader = new GameLoader();
+        this.dispatcher = dispatcher;
         this.playerId = model.getAllEntities()
                 .stream()
                 .findFirst()
@@ -65,66 +66,47 @@ public class Servicelayer {
     }
 
     public void createEntity(String nodeId) {
-        CompletableFuture<EntityId> future = new CompletableFuture<>();
         commands.submit(() -> {
-            try {
-                updateInProgress = true;
-                playerId = entityManager.createEntity(model, nodeId);
-                views.forEach(view -> view.bind(playerId));
-                future.complete(playerId);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
-            } finally {
-                updateInProgress = false;
-            }
+            updateInProgress = true;
+            playerId = entityManager.createEntity(model, nodeId);
+            views.forEach(view -> view.bind(playerId));
+            gameStateView.update(playerId);
+            dispatcher.dispatch(() -> gameStateView.update(playerId));
+            updateInProgress = false;
         });
-        try {
-            playerId = future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Failed to create entity", e);
-        }
+
     }
 
     public void removeEntity(int id) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
         commands.submit(() -> {
-            try {
-                updateInProgress = true;
-                gameStateView.remove(playerId);
-                views.forEach(view -> view.unbind(playerId));
-                entityManager.removeEntity(model, playerId);
-                future.complete(null);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
-            } finally {
-                updateInProgress = false;
-            }
+            updateInProgress = true;
+            EntityId entityId = new EntityId(id);
+            views.forEach(view -> view.unbind(entityId));
+            entityManager.removeEntity(model, entityId);
+            dispatcher.dispatch(() -> gameStateView.remove(entityId));
+            updateInProgress = false;
         });
-        try {
-            future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Failed to remove entity", e);
-        }
     }
 
     public void setDirection(String targetId) {
         commands.submit(new SetDirectionCommand(
-                model, dij, graph, playerId, targetId));
+                model, dij, graph, playerId, targetId, dispatcher));
     }
 
     public void setColor(String color) {
         commands.submit(() -> {
             if (State.WAIT_AT_WORKSHOP == model.getStates().get(playerId).get()) {
                 model.getColors().get(playerId).setColor(color);
-                model.getColors().get(playerId).notifyObservers(playerId);
+                dispatcher.dispatch(() -> model.getColors().get(playerId).notifyObservers(playerId));
             }
         });
     }
 
     public void setSpeed(double speed) {
-        commands.submit(() -> model.getSpeeds().get(playerId).setSnapshot(new SpeedSnapshot(speed)));
+        commands.submit(() -> {
+            model.getSpeeds().get(playerId).setSnapshot(new SpeedSnapshot(speed));
+            model.getSpeeds().get(playerId).notifyObservers(playerId);
+        });
     }
 
     public void setEngine(EngineType engineType) {
@@ -135,7 +117,7 @@ public class Servicelayer {
                 model.getStorage().get(playerId)
                         .setSnapshot(new EnergyStorageSnapshot(engine.capacity(), engine.capacity()));
 
-                model.getEngines().get(playerId).notifyObservers(playerId);
+                dispatcher.dispatch(() -> model.getEngines().get(playerId).notifyObservers(playerId));
             }
         });
     }

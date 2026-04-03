@@ -30,7 +30,6 @@ public class StateView extends ParentView<CarModel> implements StateObserver {
         State state = model.getStates().get(id).get();
         cache.put(id, state);
         model.getStates().get(id).addObserver(this);
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -48,7 +47,6 @@ public class StateView extends ParentView<CarModel> implements StateObserver {
     @Override
     public void update(EntityId id) {
         cache.put(id, model.getStates().get(id).get());
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     public State getState(EntityId id) {

@@ -30,7 +30,6 @@ public class PositionView extends ParentView<CarModel> implements PositionObserv
         PositionSnapshot snap = model.getPositions().get(id).getSnapshot();
         cache.put(id, snap);
         model.getPositions().get(id).addObserver(this);
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -48,7 +47,6 @@ public class PositionView extends ParentView<CarModel> implements PositionObserv
     @Override
     public void update(EntityId id) {
         cache.put(id, model.getPositions().get(id).getSnapshot());
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     public PositionSnapshot getPosition(EntityId id) {

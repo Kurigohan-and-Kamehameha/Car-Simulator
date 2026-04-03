@@ -5,6 +5,7 @@ import org.example.cargame.enums.NodeType;
 import org.example.cargame.enums.State;
 import org.example.cargame.graph.Edge;
 import org.example.cargame.graph.Node;
+import org.example.cargame.observer.GameStateView;
 import org.example.cargame.snapshot.EnergyStorageSnapshot;
 import org.example.cargame.snapshot.PathSnapshot;
 import org.example.cargame.snapshot.PositionSnapshot;
@@ -16,10 +17,12 @@ import java.util.List;
 public class PhysicsEngine {
 
     private final CarModel model;
+    private final GameStateView gameStateView;
     private static final double DELTA_TIME = 0.016;
 
-    public PhysicsEngine(CarModel model) {
+    public PhysicsEngine(CarModel model, GameStateView gameStateView) {
         this.model = model;
+        this.gameStateView = gameStateView;
     }
 
     public void update() {
@@ -112,19 +115,19 @@ public class PhysicsEngine {
         for (EntityId id : model.getAllEntities()) {
             var pos = model.getPositions().get(id);
             var state = model.getStates().get(id);
-            var speed = model.getSpeeds().get(id);
             var messages = model.getMessages().get(id);
             var storage = model.getStorage().get(id);
 
-            if (pos == null || state == null || speed == null || messages == null || storage == null) {
+            if (pos == null || state == null || messages == null || storage == null) {
                 continue;
             }
 
             pos.notifyObservers(id);
             state.notifyObservers(id);
-            speed.notifyObservers(id);
             messages.notifyObservers(id);
             storage.notifyObservers(id);
+
+            gameStateView.update(id);
         }
     }
 }

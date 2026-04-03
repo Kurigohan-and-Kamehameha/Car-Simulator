@@ -31,7 +31,6 @@ public class StorageView extends ParentView<CarModel> implements StorageObserver
         EnergyStorageSnapshot snap = model.getStorage().get(id).getSnapshot();
         cache.put(id, snap);
         model.getStorage().get(id).addObserver(this);
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -49,7 +48,6 @@ public class StorageView extends ParentView<CarModel> implements StorageObserver
     @Override
     public void update(EntityId id) {
         cache.put(id, model.getStorage().get(id).getSnapshot());
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     public double getPower(EntityId id) {

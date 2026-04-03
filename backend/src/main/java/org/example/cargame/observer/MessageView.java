@@ -34,7 +34,6 @@ public class MessageView extends ParentView<CarModel> implements MessageObserver
         map.put(MessageType.WARNING, msgComponent.getMessage(MessageType.WARNING));
         cache.put(id, map);
         msgComponent.addObserver(this);
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -56,7 +55,6 @@ public class MessageView extends ParentView<CarModel> implements MessageObserver
                 .put(MessageType.ALERT, msgComponent.getMessage(MessageType.ALERT));
         cache.get(id)
                 .put(MessageType.WARNING, msgComponent.getMessage(MessageType.WARNING));
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     public String alert(EntityId id) {

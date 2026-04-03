@@ -29,7 +29,6 @@ public class ColorView extends ParentView<CarModel> implements ColorObserver {
         String color = model.getColors().get(id).getColor();
         cache.put(id, color);
         model.getColors().get(id).addObserver(this);
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ColorView extends ParentView<CarModel> implements ColorObserver {
     @Override
     public void update(EntityId id) {
         cache.put(id, model.getColors().get(id).getColor());
-        dispatcher.dispatch(() -> super.notifyObservers(id));
+        super.notifyObservers(id);
     }
 
     public String getColor(EntityId id) {

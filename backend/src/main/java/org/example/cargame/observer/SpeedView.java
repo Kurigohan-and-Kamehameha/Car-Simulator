@@ -30,7 +30,6 @@ public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
         SpeedSnapshot snap = model.getSpeeds().get(id).getSnapshot();
         cache.put(id, snap);
         model.getSpeeds().get(id).addObserver(this);
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -48,7 +47,7 @@ public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
     @Override
     public void update(EntityId id) {
         cache.put(id, model.getSpeeds().get(id).getSnapshot());
-        dispatcher.dispatch(() -> super.notifyObservers(id));
+        super.notifyObservers(id);
     }
 
     public double getSpeed(EntityId id) {

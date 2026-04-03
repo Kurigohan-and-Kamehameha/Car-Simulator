@@ -32,7 +32,6 @@ public class EngineView extends ParentView<CarModel> implements EngineObserver {
                 .getType();
         cache.put(id, type);
         model.getEngines().get(id).addObserver(this);
-        dispatcher.dispatch(() -> super.notifyObservers(id));
     }
 
     @Override
@@ -50,7 +49,7 @@ public class EngineView extends ParentView<CarModel> implements EngineObserver {
     @Override
     public void update(EntityId id) {
         cache.put(id, model.getEngines().get(id).getActiveEngine().getType());
-        dispatcher.dispatch(() -> super.notifyObservers(id));
+        super.notifyObservers(id);
     }
 
     public EngineType getEngineType(EntityId id) {

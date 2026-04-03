@@ -9,6 +9,7 @@ import org.example.cargame.enums.State;
 import org.example.cargame.graph.Edge;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.graph.Node;
+import org.example.cargame.observer.ObserverDispatcher;
 import org.example.cargame.snapshot.PathSnapshot;
 
 import java.util.List;
@@ -17,20 +18,23 @@ public class SetDirectionCommand implements Command {
     private final CarModel model;
     private final Dijkstra dij;
     private final Graph graph;
+    private final ObserverDispatcher dispatcher;
 
     private final EntityId playerId;
     private final String targetId;
 
     public SetDirectionCommand(CarModel model,
-                               Dijkstra dij,
-                               Graph graph,
-                               EntityId playerId,
-                               String targetId) {
+            Dijkstra dij,
+            Graph graph,
+            EntityId playerId,
+            String targetId,
+            ObserverDispatcher dispatcher) {
         this.model = model;
         this.dij = dij;
         this.graph = graph;
         this.playerId = playerId;
         this.targetId = targetId;
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -92,8 +96,10 @@ public class SetDirectionCommand implements Command {
                         "Must be at workshop to change engine or color.");
                 model.getMessages().get(playerId).setMessage(MessageType.ALERT, "");
 
-                model.getStates().get(playerId).notifyObservers(playerId);
-                model.getMessages().get(playerId).notifyObservers(playerId);
+                dispatcher.dispatch(() -> {
+                    model.getStates().get(playerId).notifyObservers(playerId);
+                    model.getMessages().get(playerId).notifyObservers(playerId);
+                });
 
             }
         }
