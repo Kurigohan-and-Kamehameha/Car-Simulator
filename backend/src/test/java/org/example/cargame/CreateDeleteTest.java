@@ -18,6 +18,9 @@ public class CreateDeleteTest {
     private Servicelayer servicelayer;
 
     @Autowired
+    private CommandQueue commands;
+
+    @Autowired
     private CarModel model;
 
     @BeforeEach
@@ -26,16 +29,21 @@ public class CreateDeleteTest {
     }
 
     @Test
-    void testSetAndGetColor() {
+    void testCreateDeleteEntity() {
 
         Graph graph = new Graph();
         Node a = new Node("A", 400, 200, null);
         graph.addNode(a);
 
         servicelayer.createEntity("A");
+
+        commands.executeAll();
         List<Integer> entitiesAfterCreate = servicelayer.getAllEntities();
 
         servicelayer.removeEntity(entitiesAfterCreate.getFirst());
+
+        commands.executeAll();
+
         List<Integer> entitiesAfterRemove = servicelayer.getAllEntities();
 
         assertEquals(1, entitiesAfterCreate.size());
