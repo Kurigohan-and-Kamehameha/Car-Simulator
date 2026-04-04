@@ -2,7 +2,7 @@ package org.example.cargame.components;
 
 import org.example.cargame.snapshot.PositionSnapshot;
 
-public class PositionComponent extends Component {
+public class PositionComponent extends Component<PositionSnapshot> {
     private volatile PositionSnapshot snapshot;
 
     public PositionSnapshot getSnapshot() {

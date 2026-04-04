@@ -2,7 +2,7 @@ package org.example.cargame.components;
 
 import org.example.cargame.snapshot.SpeedSnapshot;
 
-public class SpeedComponent extends Component {
+public class SpeedComponent extends Component<SpeedSnapshot> {
     private volatile SpeedSnapshot snapshot;
 
     public SpeedSnapshot getSnapshot() {

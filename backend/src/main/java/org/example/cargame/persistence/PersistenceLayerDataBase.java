@@ -8,10 +8,7 @@ import org.example.cargame.graph.Edge;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.graph.Node;
 import org.example.cargame.persistence.entitys.*;
-import org.example.cargame.snapshot.EnergyStorageSnapshot;
-import org.example.cargame.snapshot.PathSnapshot;
-import org.example.cargame.snapshot.PositionSnapshot;
-import org.example.cargame.snapshot.SpeedSnapshot;
+import org.example.cargame.snapshot.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -52,10 +49,10 @@ public class PersistenceLayerDataBase {
             stateRepo.save(entity);
         });
 
-        data.speeds.forEach((id, snap) -> {
+        data.speeds.forEach((id, speed) -> {
             SpeedComponentEntity entity = new SpeedComponentEntity();
             entity.setId((long) id.getId());
-            entity.setSpeed(snap.speed());
+            entity.setSpeed(speed);
             speedRepo.save(entity);
         });
 
@@ -135,7 +132,7 @@ public class PersistenceLayerDataBase {
 
         speedRepo.findAll().forEach(entity -> {
             EntityId id = new EntityId(entity.getId().intValue());
-            data.speeds.put(id, new SpeedSnapshot(entity.getSpeed()));
+            data.speeds.put(id, entity.getSpeed());
         });
 
         positionRepo.findAll().forEach(entity -> {

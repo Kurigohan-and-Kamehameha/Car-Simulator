@@ -4,16 +4,13 @@ import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.EngineType;
 import org.example.cargame.enums.MessageType;
 import org.example.cargame.enums.State;
-import org.example.cargame.snapshot.EnergyStorageSnapshot;
-import org.example.cargame.snapshot.PathSnapshot;
-import org.example.cargame.snapshot.PositionSnapshot;
-import org.example.cargame.snapshot.SpeedSnapshot;
+import org.example.cargame.snapshot.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoadedGameData {
-    public Map<EntityId, SpeedSnapshot> speeds = new HashMap<>();
+    public Map<EntityId, Double> speeds = new HashMap<>();
     public Map<EntityId, PositionSnapshot> positions = new HashMap<>();
     public Map<EntityId, String> colors = new HashMap<>();
     public Map<EntityId, EngineType> engines = new HashMap<>();

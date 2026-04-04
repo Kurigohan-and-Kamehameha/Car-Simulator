@@ -11,6 +11,7 @@ import org.example.cargame.graph.Graph;
 import org.example.cargame.graph.Node;
 import org.example.cargame.observer.ObserverDispatcher;
 import org.example.cargame.snapshot.PathSnapshot;
+import org.example.cargame.snapshot.StateSnapshot;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class SetDirectionCommand implements Command {
 
     @Override
     public void run() {
-        if (!model.getAllEntities().isEmpty() && State.DRIVE != model.getStates().get(playerId).get()) {
+        if (!model.getAllEntities().isEmpty() && State.DRIVE != model.getStates().get(playerId).getSnapshot().state()) {
             String currentId = model.getPositions().get(playerId).getSnapshot().currentNode().getId();
             if (!targetId.equals(currentId)) {
                 Node targetNode = graph.getNodeById(targetId);
@@ -56,9 +57,9 @@ public class SetDirectionCommand implements Command {
                 for (Edge edge : path) {
                     double weight = edge.getWeight();
                     if (currentPower < weight) {
-                        model.getMessages().get(playerId)
-                                .setMessage(MessageType.ALERT, "Not enough Power to reach target");
-                        model.getMessages().get(playerId).notifyObservers(playerId);
+                        var compMessages = model.getMessages().get(playerId);
+                        compMessages.addMessage(MessageType.ALERT, "Not enough Power to reach target");
+                        model.getMessages().get(playerId).notifyObservers(playerId, compMessages.getSnapshot());
                         return;
                     }
                     currentPower -= weight;
@@ -83,22 +84,27 @@ public class SetDirectionCommand implements Command {
                         .orElse(Double.POSITIVE_INFINITY);
 
                 if (currentPower < minDistanceToGas) {
-                    model.getMessages().get(playerId)
-                            .setMessage(MessageType.ALERT, "Not enough Power to reach next gas station after target");
-                    model.getMessages().get(playerId).notifyObservers(playerId);
+                    var compMessages = model.getMessages().get(playerId);
+                    compMessages.addMessage(MessageType.ALERT,
+                            "Not enough Power to reach next gas station after target");
+                    model.getMessages().get(playerId).notifyObservers(playerId, compMessages.getSnapshot());
                     return;
                 }
 
                 PathSnapshot newSnap = new PathSnapshot(path);
                 model.getPaths().get(playerId).setSnapshot(newSnap);
-                model.getStates().get(playerId).set(State.DRIVE);
-                model.getMessages().get(playerId).setMessage(MessageType.WARNING,
+
+                var compState = model.getStates().get(playerId);
+                compState.setSnapshot(new StateSnapshot(State.DRIVE));
+
+                var compMessages = model.getMessages().get(playerId);
+                compMessages.addMessage(MessageType.ALERT, "");
+                compMessages.addMessage(MessageType.WARNING,
                         "Must be at workshop to change engine or color.");
-                model.getMessages().get(playerId).setMessage(MessageType.ALERT, "");
 
                 dispatcher.dispatch(() -> {
-                    model.getStates().get(playerId).notifyObservers(playerId);
-                    model.getMessages().get(playerId).notifyObservers(playerId);
+                    compState.notifyObservers(playerId, compState.getSnapshot());
+                    compMessages.notifyObservers(playerId, compMessages.getSnapshot());
                 });
 
             }

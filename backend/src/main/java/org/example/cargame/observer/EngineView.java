@@ -3,14 +3,15 @@ package org.example.cargame.observer;
 import org.example.cargame.CarModel;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.EngineType;
+import org.example.cargame.snapshot.EngineSnapshot;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class EngineView extends ParentView<CarModel> implements EngineObserver {
-    private final Map<EntityId, EngineType> cache = new ConcurrentHashMap<>();
+public class EngineView extends ParentView<CarModel> implements PushObserver<EngineSnapshot> {
+    private final Map<EntityId, EngineSnapshot> cache = new ConcurrentHashMap<>();
 
     public EngineView(CarModel model, ObserverDispatcher dispatcher) {
         super(model, dispatcher);
@@ -27,33 +28,31 @@ public class EngineView extends ParentView<CarModel> implements EngineObserver {
 
     @Override
     public void bind(EntityId id) {
-        EngineType type = model.getEngines().get(id)
-                .getActiveEngine()
-                .getType();
-        cache.put(id, type);
+        EngineSnapshot snapshot = model.getEngines().get(id).getSnapshot();
         model.getEngines().get(id).addObserver(this);
+        dispatcher.dispatch(() -> cache.put(id, snapshot));
     }
 
     @Override
     public void rebind() {
-        cache.clear();
+        dispatcher.dispatch(cache::clear);
         bind();
     }
 
     @Override
     public void unbind(EntityId id) {
-        cache.remove(id);
         model.getEngines().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> cache.remove(id));
     }
 
     @Override
-    public void update(EntityId id) {
-        cache.put(id, model.getEngines().get(id).getActiveEngine().getType());
+    public void update(EntityId id, EngineSnapshot data) {
+        cache.put(id, data);
         super.notifyObservers(id);
     }
 
     public EngineType getEngineType(EntityId id) {
-        return cache.get(id);
+        return cache.get(id).activeEngine().getType();
     }
 
 }

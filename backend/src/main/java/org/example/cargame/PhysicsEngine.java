@@ -6,10 +6,8 @@ import org.example.cargame.enums.State;
 import org.example.cargame.graph.Edge;
 import org.example.cargame.graph.Node;
 import org.example.cargame.observer.GameStateView;
-import org.example.cargame.snapshot.EnergyStorageSnapshot;
-import org.example.cargame.snapshot.PathSnapshot;
-import org.example.cargame.snapshot.PositionSnapshot;
-import org.example.cargame.snapshot.SpeedSnapshot;
+import org.example.cargame.observer.ObserverDispatcher;
+import org.example.cargame.snapshot.*;
 import org.example.cargame.enums.MessageType;
 
 import java.util.List;
@@ -18,16 +16,18 @@ public class PhysicsEngine {
 
     private final CarModel model;
     private final GameStateView gameStateView;
+    private final ObserverDispatcher dispatcher;
     private static final double DELTA_TIME = 0.016;
 
-    public PhysicsEngine(CarModel model, GameStateView gameStateView) {
+    public PhysicsEngine(CarModel model, GameStateView gameStateView, ObserverDispatcher dispatcher) {
         this.model = model;
         this.gameStateView = gameStateView;
+        this.dispatcher = dispatcher;
     }
 
     public void update() {
         for (EntityId id : model.getAllEntities()) {
-            if (model.getStates().get(id).get() != State.DRIVE) {
+            if (model.getStates().get(id).getSnapshot().state() != State.DRIVE) {
                 continue;
             }
             PositionSnapshot currentPosSnap = model.getPositions().get(id).getSnapshot();
@@ -82,12 +82,13 @@ public class PhysicsEngine {
 
                     switch (target.getType()) {
                         case WORKSHOP -> {
-                            model.getStates().get(id).set(State.WAIT_AT_WORKSHOP);
-                            model.getMessages().get(id).setMessage(MessageType.WARNING, "");
+                            model.getStates().get(id).setSnapshot(new StateSnapshot(State.WAIT_AT_WORKSHOP));
+                            model.getMessages().get(id).addMessage(MessageType.WARNING, "");
                         }
-                        case INTERSECTION -> model.getStates().get(id).set(State.WAIT_AT_INTERSECTION);
+                        case INTERSECTION ->
+                            model.getStates().get(id).setSnapshot(new StateSnapshot(State.WAIT_AT_INTERSECTION));
                         case GASSTATION -> {
-                            model.getStates().get(id).set(State.WAIT_AT_GASSTATION);
+                            model.getStates().get(id).setSnapshot(new StateSnapshot(State.WAIT_AT_GASSTATION));
                             model.getStorage().get(id).setSnapshot(new EnergyStorageSnapshot(
                                     currentStorageSnap.capacity(), currentStorageSnap.capacity()));
                         }
@@ -98,6 +99,7 @@ public class PhysicsEngine {
             double x = toX(newProgress, edge);
             double y = toY(newProgress, edge);
             model.getPositions().get(id).setSnapshot(new PositionSnapshot(null, edge, newProgress, x, y));
+
         }
     }
 
@@ -113,21 +115,21 @@ public class PhysicsEngine {
 
     public void notifyObservers() {
         for (EntityId id : model.getAllEntities()) {
-            var pos = model.getPositions().get(id);
-            var state = model.getStates().get(id);
-            var messages = model.getMessages().get(id);
-            var storage = model.getStorage().get(id);
 
-            if (pos == null || state == null || messages == null || storage == null) {
-                continue;
-            }
+            PositionSnapshot posSnap = model.getPositions().get(id).getSnapshot();
+            StateSnapshot stateSnap = model.getStates().get(id).getSnapshot();
+            MessageSnapshot messageSnap = model.getMessages().get(id).getSnapshot();
+            EnergyStorageSnapshot storageSnap = model.getStorage().get(id).getSnapshot();
 
-            pos.notifyObservers(id);
-            state.notifyObservers(id);
-            messages.notifyObservers(id);
-            storage.notifyObservers(id);
+            dispatcher.dispatch(() -> {
+                model.getPositions().get(id).notifyObservers(id, posSnap);
+                model.getStates().get(id).notifyObservers(id, stateSnap);
+                model.getMessages().get(id).notifyObservers(id, messageSnap);
+                model.getStorage().get(id).notifyObservers(id, storageSnap);
 
-            gameStateView.update(id);
+                gameStateView.update(id);
+            });
         }
     }
+
 }

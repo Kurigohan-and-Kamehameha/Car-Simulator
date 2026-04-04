@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class PositionView extends ParentView<CarModel> implements PositionObserver {
+public class PositionView extends ParentView<CarModel> implements PushObserver<PositionSnapshot> {
     private final Map<EntityId, PositionSnapshot> cache = new ConcurrentHashMap<>();
 
     public PositionView(CarModel model, ObserverDispatcher dispatcher) {
@@ -28,25 +28,25 @@ public class PositionView extends ParentView<CarModel> implements PositionObserv
     @Override
     public void bind(EntityId id) {
         PositionSnapshot snap = model.getPositions().get(id).getSnapshot();
-        cache.put(id, snap);
         model.getPositions().get(id).addObserver(this);
+        dispatcher.dispatch(() -> cache.put(id, snap));
     }
 
     @Override
     public void rebind() {
-        cache.clear();
+        dispatcher.dispatch(cache::clear);
         bind();
     }
 
     @Override
     public void unbind(EntityId id) {
-        cache.remove(id);
         model.getPositions().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> cache.remove(id));
     }
 
     @Override
-    public void update(EntityId id) {
-        cache.put(id, model.getPositions().get(id).getSnapshot());
+    public void update(EntityId id, PositionSnapshot data) {
+        cache.put(id, data);
     }
 
     public PositionSnapshot getPosition(EntityId id) {

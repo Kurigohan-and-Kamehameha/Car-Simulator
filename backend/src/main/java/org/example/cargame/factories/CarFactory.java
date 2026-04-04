@@ -9,9 +9,7 @@ import org.example.cargame.enums.NodeType;
 import org.example.cargame.enums.State;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.graph.Node;
-import org.example.cargame.snapshot.EnergyStorageSnapshot;
-import org.example.cargame.snapshot.PositionSnapshot;
-import org.example.cargame.snapshot.SpeedSnapshot;
+import org.example.cargame.snapshot.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -39,31 +37,31 @@ public class CarFactory {
         speed.setSnapshot(new SpeedSnapshot(80));
 
         ColorComponent color = new ColorComponent();
-        color.setColor("#0000FF");
+        color.setSnapshot(new ColorSnapshot("#0000FF"));
 
         EngineComponent engine = engineFactory.create();
         engine.setEngine(EngineType.FUEL);
 
         EnergyStorageComponent storage = new EnergyStorageComponent();
         storage.setSnapshot(
-                new EnergyStorageSnapshot(engine.getActiveEngine().capacity(), engine.getActiveEngine().capacity()));
+                new EnergyStorageSnapshot(engine.getSnapshot().activeEngine().capacity(), engine.getSnapshot().activeEngine().capacity()));
 
         StateComponent state = new StateComponent();
 
         MessageComponent msg = new MessageComponent();
-        msg.setMessage(MessageType.ALERT, "");
+        msg.addMessage(MessageType.ALERT, "");
         switch (Objects.requireNonNull(startNode).getType()) {
             case NodeType.WORKSHOP:
-                state.set(State.WAIT_AT_WORKSHOP);
-                msg.setMessage(MessageType.WARNING, "");
+                state.setSnapshot(new StateSnapshot(State.WAIT_AT_WORKSHOP));
+                msg.addMessage(MessageType.WARNING, "");
                 break;
             case NodeType.INTERSECTION:
-                state.set(State.WAIT_AT_INTERSECTION);
-                msg.setMessage(MessageType.WARNING, "Must be at workshop to change engine or color.");
+                state.setSnapshot(new StateSnapshot(State.WAIT_AT_INTERSECTION));
+                msg.addMessage(MessageType.WARNING, "Must be at workshop to change engine or color.");
                 break;
             case NodeType.GASSTATION:
-                state.set(State.WAIT_AT_GASSTATION);
-                msg.setMessage(MessageType.WARNING, "Must be at workshop to change engine or color.");
+                state.setSnapshot(new StateSnapshot(State.WAIT_AT_GASSTATION));
+                msg.addMessage(MessageType.WARNING, "Must be at workshop to change engine or color.");
                 break;
         }
 

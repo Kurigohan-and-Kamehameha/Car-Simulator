@@ -3,14 +3,15 @@ package org.example.cargame.observer;
 import org.example.cargame.CarModel;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.State;
+import org.example.cargame.snapshot.StateSnapshot;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class StateView extends ParentView<CarModel> implements StateObserver {
-    private final Map<EntityId, State> cache = new ConcurrentHashMap<>();
+public class StateView extends ParentView<CarModel> implements PushObserver<StateSnapshot> {
+    private final Map<EntityId, StateSnapshot> cache = new ConcurrentHashMap<>();
 
     public StateView(CarModel model, ObserverDispatcher dispatcher) {
         super(model, dispatcher);
@@ -27,29 +28,30 @@ public class StateView extends ParentView<CarModel> implements StateObserver {
 
     @Override
     public void bind(EntityId id) {
-        State state = model.getStates().get(id).get();
-        cache.put(id, state);
+        StateSnapshot snapshot = model.getStates().get(id).getSnapshot();
         model.getStates().get(id).addObserver(this);
+        dispatcher.dispatch(() -> cache.put(id, snapshot));
     }
 
     @Override
     public void rebind() {
-        cache.clear();
+        dispatcher.dispatch(cache::clear);
         bind();
     }
 
     @Override
     public void unbind(EntityId id) {
-        cache.remove(id);
         model.getStates().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> cache.remove(id));
     }
 
     @Override
-    public void update(EntityId id) {
-        cache.put(id, model.getStates().get(id).get());
+    public void update(EntityId id, StateSnapshot data) {
+        cache.put(id, data);
     }
 
     public State getState(EntityId id) {
-        return cache.get(id) != null ? cache.get(id) : State.WAIT_AT_WORKSHOP;
+        return cache.get(id) != null ? cache.get(id).state() : State.WAIT_AT_WORKSHOP;
     }
+
 }

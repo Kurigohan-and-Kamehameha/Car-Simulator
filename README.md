@@ -1,43 +1,36 @@
-# 🚗 Car Simulation Engine – Real-Time MVC/ECS Architecture
+# 🚗 High-Performance Car Engine & Simulation – Multi-Threaded ECS Architecture
 
-A modular, event-driven car simulation system built with **Spring Boot (backend)** and **React (frontend)**.  
-This project focuses on **real-time updates, concurrency, and scalable architecture design**, going beyond typical CRUD applications.
-
----
-
-## 🧠 Architecture & Design
-
-### MVC + ECS
-- Clear separation of concerns using **Model-View-Controller**
-- Entity-based design (ECS-inspired) for flexible and scalable object management
-
-### Event-Driven System (Observer Pattern)
-- Decoupled communication between components
-- Automatic propagation of state changes across the system
-- Views react to model updates without tight coupling
-
-### Snapshot Pattern
-- Immutable DTOs (`GameStateDTO`, `SpeedSnapshot`, etc.)
-- Ensures **thread-safe data sharing**
-- Prevents inconsistent reads in concurrent environments
+An advanced, lock-free, deterministic car simulation engine built with **Spring Boot (Backend)** and **React (Frontend)**.  
+This project was constructed to solve distributed systems and concurrency challenges, utilizing modern game-engine architecture to guarantee high-speed tick-rates over REST/WebSockets without data races or thread deadlocks.
 
 ---
 
-## ⚡ Concurrency & Real-Time Processing
+## 🧠 Core Architecture & Design
 
-- **Command Queue**
-    - Processes game logic sequentially
-    - Avoids race conditions in state mutations
+### Entity-Component-System (ECS) Purity
+- **Data-Oriented Design:** Complete segregation of business logic, mathematical models, and UI mapping. `EntityId` acts as the pure identity, mapping dynamically to isolated components (`SpeedComponent`, `EngineComponent`).
+- **Single Responsibility Principle:** Business rules and bidirectional logic are strictly contained within the `Servicelayer`, preventing infinite UI "Update Storms" and keeping components as clean data envelopes.
 
-- **Observer Dispatcher**
-    - Synchronizes updates across views
-    - Ensures consistent state aggregation
+### Double-layered Hybrid Push-Pull Observer Pattern
+- **The Push Boundary (`PushObserver<T>`):** The core physics model securely *pushes* highly-generic, immutable snapshots directly across thread boundaries using captured lambdas. This mathematically eliminates `NullPointerExceptions` caused by concurrent entity mapping/garbage collection.
+- **The Pull Boundary:** Composite UI views (like `GameStateView`) structurally *pull* from securely synchronized downstream caches to build unified DTO objects, preventing views from reaching blindly into rapidly mutating physics algorithms.
 
-- Thread-safe data structures:
-    - `ConcurrentHashMap`
-    - `CopyOnWriteArrayList`
+---
 
-➡️ Designed for **live updates** instead of tick-based polling.
+## ⚡ Concurrency & Lock-Free Threading
+
+To achieve deterministic simulation speed, the system implements a strict **Three-Stage Thread Pipeline** (mirroring professional AAA game mechanics):
+
+1. **Input Stage (REST / WebSockets)**
+   - HTTP threads do not block or manually mutate data. User interactions are rapidly digested onto a non-blocking `CommandQueue` to guarantee zero server latency.
+2. **Physics Stage (`GameLoopThread`)**
+   - Freed from String concatenation and DTO mapping, the core logic thread securely drains the Command Queue and computes pure telemetry mathematics.
+   - Constructed using **Optimistic Concurrency** and **Atomic Guards** instead of heavy, unscalable `synchronized` locks. 
+3. **Rendering Stage (`ObserverThread`)**
+   - A dedicated rendering background thread cleanly empties an `ObserverDispatcher` queue, separating network serialization workload from the physics simulation.
+
+### Torn-Read Prevention
+- Engineered a **Batched-UI pipeline** that perfectly encapsulates varied asynchronous metric calculations into a single flawless mathematical frame. This structurally eliminates 'Torn Reads', race-conditions, and 'Ghost/Zombie' entity anomalies from appearing on the frontend network socket.
 
 ---
 

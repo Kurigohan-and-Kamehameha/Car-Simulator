@@ -1,13 +1,15 @@
 package org.example.cargame.components;
 
-public class ColorComponent extends Component {
-    private volatile String color;
+import org.example.cargame.snapshot.ColorSnapshot;
 
-    public void setColor(String color){
-        this.color = color;
+public class ColorComponent extends Component<ColorSnapshot> {
+    private volatile ColorSnapshot snapshot;
+
+    public ColorSnapshot getSnapshot() {
+        return snapshot;
     }
 
-    public String getColor(){
-        return this.color;
+    public void setSnapshot(ColorSnapshot snapshot) {
+        this.snapshot = snapshot;
     }
 }

@@ -2,14 +2,15 @@ package org.example.cargame.observer;
 
 import org.example.cargame.CarModel;
 import org.example.cargame.entity.EntityId;
+import org.example.cargame.snapshot.ColorSnapshot;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class ColorView extends ParentView<CarModel> implements ColorObserver {
-    private final Map<EntityId, String> cache = new ConcurrentHashMap<>();
+public class ColorView extends ParentView<CarModel> implements PushObserver<ColorSnapshot> {
+    private final Map<EntityId, ColorSnapshot> cache = new ConcurrentHashMap<>();
 
     public ColorView(CarModel model, ObserverDispatcher dispatcher) {
         super(model, dispatcher);
@@ -26,31 +27,31 @@ public class ColorView extends ParentView<CarModel> implements ColorObserver {
 
     @Override
     public void bind(EntityId id) {
-        String color = model.getColors().get(id).getColor();
-        cache.put(id, color);
+        ColorSnapshot color = model.getColors().get(id).getSnapshot();
         model.getColors().get(id).addObserver(this);
+        dispatcher.dispatch(() -> cache.put(id, color));
     }
 
     @Override
     public void rebind() {
-        cache.clear();
+        dispatcher.dispatch(cache::clear);
         bind();
     }
 
     @Override
     public void unbind(EntityId id) {
-        cache.remove(id);
         model.getColors().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> cache.remove(id));
     }
 
     @Override
-    public void update(EntityId id) {
-        cache.put(id, model.getColors().get(id).getColor());
+    public void update(EntityId id, ColorSnapshot data) {
+        cache.put(id, data);
         super.notifyObservers(id);
     }
 
     public String getColor(EntityId id) {
-        return cache.get(id) != null ? cache.get(id) : "#000000";
+        return cache.get(id) != null ? cache.get(id).color() : "#000000";
     }
 
 }

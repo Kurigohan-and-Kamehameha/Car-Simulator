@@ -4,6 +4,10 @@ import org.example.cargame.CarModel;
 import org.example.cargame.components.*;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.factories.EngineFactory;
+import org.example.cargame.snapshot.ColorSnapshot;
+import org.example.cargame.snapshot.SpeedSnapshot;
+import org.example.cargame.snapshot.MessageSnapshot;
+import org.example.cargame.snapshot.StateSnapshot;
 
 public class GameLoader {
 
@@ -11,9 +15,9 @@ public class GameLoader {
 
         data.speeds.forEach((id, snap) -> model.removeEntity(id));
 
-        data.speeds.forEach((id, snap) -> {
+        data.speeds.forEach((id, speed) -> {
             SpeedComponent comp = new SpeedComponent();
-            comp.setSnapshot(snap);
+            comp.setSnapshot(new SpeedSnapshot(speed));
             model.getSpeeds().put(id, comp);
         });
 
@@ -23,15 +27,15 @@ public class GameLoader {
             model.getPositions().put(id, comp);
         });
 
-        data.colors.forEach((id, color) -> {
+        data.colors.forEach((id, colorStr) -> {
             ColorComponent comp = new ColorComponent();
-            comp.setColor(color);
+            comp.setSnapshot(new ColorSnapshot(colorStr));
             model.getColors().put(id, comp);
         });
 
-        data.engines.forEach((id, type) -> {
+        data.engines.forEach((id, engineType) -> {
             EngineComponent comp = engineFactory.create();
-            comp.setEngine(type);
+            comp.setEngine(engineType);
             model.getEngines().put(id, comp);
         });
 
@@ -53,9 +57,9 @@ public class GameLoader {
             }
         }
         */
-        data.messages.forEach((id, msgs) -> {
+        data.messages.forEach((id, msgMap) -> {
             MessageComponent comp = new MessageComponent();
-            comp.setMessages(msgs);
+            comp.setSnapshot(new MessageSnapshot(msgMap));
             model.getMessages().put(id, comp);
         });
 
@@ -67,7 +71,7 @@ public class GameLoader {
 
         data.states.forEach((id, state) -> {
             StateComponent comp = new StateComponent();
-            comp.set(state);
+            comp.setSnapshot(new StateSnapshot(state));
             model.getStates().put(id, comp);
         });
 

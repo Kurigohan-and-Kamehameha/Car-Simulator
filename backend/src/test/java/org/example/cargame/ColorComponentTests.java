@@ -4,6 +4,7 @@ import org.example.cargame.components.ColorComponent;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.observer.ColorView;
 import org.example.cargame.observer.ObserverDispatcher;
+import org.example.cargame.snapshot.ColorSnapshot;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,28 +20,28 @@ class ColorComponentTests {
     @Test
     void testSetAndGetColor() {
         ColorComponent component = new ColorComponent();
-        component.setColor("red");
-        assertEquals("red", component.getColor());
+        component.setSnapshot(new ColorSnapshot("red"));
+        assertEquals("red", component.getSnapshot().color());
 
-        component.setColor("blue");
-        assertEquals("blue", component.getColor());
+        component.setSnapshot(new ColorSnapshot("blue"));
+        assertEquals("blue", component.getSnapshot().color());
     }
 
     @Test
     void testColorObserverUpdate() {
         ColorComponent component = new ColorComponent();
-        component.setColor("blue");
+        component.setSnapshot(new ColorSnapshot("blue"));
 
         ObserverDispatcher dispatcher = new ObserverDispatcher();
         ColorView view = new ColorView(new DummyModel(component), dispatcher);
         EntityId id = new EntityId(0);
 
-        component.setColor("green");
-        view.update(id);
+        component.setSnapshot(new ColorSnapshot("green"));
+        view.update(id, component.getSnapshot());
         assertEquals("green", view.getColor(id));
 
-        component.setColor("yellow");
-        view.update(id);
+        component.setSnapshot(new ColorSnapshot("yellow"));
+        view.update(id, component.getSnapshot());
         assertEquals("yellow", view.getColor(id));
     }
 
@@ -63,6 +64,5 @@ class ColorComponentTests {
         }
 
     }
-
 
 }

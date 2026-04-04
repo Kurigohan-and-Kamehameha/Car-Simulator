@@ -1,15 +1,18 @@
 package org.example.cargame.components;
 
-import org.example.cargame.enums.State;
 
-public class StateComponent extends Component{
-    private volatile State state;
+import org.example.cargame.snapshot.StateSnapshot;
 
-    public State get() {
-        return state;
+public class StateComponent extends Component<StateSnapshot> {
+
+    private volatile StateSnapshot snapshot;
+
+    public StateSnapshot getSnapshot() {
+        return snapshot;
     }
 
-    public void set(State newState) {
-        this.state = newState;
+    public void setSnapshot(StateSnapshot snapshot) {
+        this.snapshot = snapshot;
     }
+
 }

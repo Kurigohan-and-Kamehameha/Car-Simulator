@@ -2,17 +2,13 @@ package org.example.cargame;
 
 import java.util.concurrent.locks.LockSupport;
 
-import org.example.cargame.observer.ObserverDispatcher;
-
 public class GameLoop implements Runnable {
     private final PhysicsEngine physics;
     private final CommandQueue commands;
-    private final ObserverDispatcher dispatcher;
 
-    public GameLoop(PhysicsEngine physics, CommandQueue commands, ObserverDispatcher dispatcher) {
+    public GameLoop(PhysicsEngine physics, CommandQueue commands) {
         this.physics = physics;
         this.commands = commands;
-        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -23,7 +19,7 @@ public class GameLoop implements Runnable {
 
             commands.executeAll();
             physics.update();
-            dispatcher.dispatch(physics::notifyObservers);
+            physics.notifyObservers();
 
             long elapsed = System.currentTimeMillis() - start;
             long sleepTime = tickDelayMs - elapsed;

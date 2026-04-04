@@ -2,7 +2,6 @@ package org.example.cargame;
 
 import jakarta.annotation.PostConstruct;
 import org.example.cargame.commands.SetDirectionCommand;
-import org.example.cargame.engine.Engine;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.EngineType;
 import org.example.cargame.enums.State;
@@ -10,6 +9,7 @@ import org.example.cargame.factories.EngineFactory;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.observer.*;
 import org.example.cargame.persistence.*;
+import org.example.cargame.snapshot.ColorSnapshot;
 import org.example.cargame.snapshot.EnergyStorageSnapshot;
 import org.example.cargame.snapshot.GameStateDTO;
 import org.example.cargame.snapshot.SpeedSnapshot;
@@ -66,8 +66,8 @@ public class Servicelayer {
     }
 
     public void createEntity(String nodeId) {
+        updateInProgress = true;
         commands.submit(() -> {
-            updateInProgress = true;
             playerId = entityManager.createEntity(model, nodeId);
             views.forEach(view -> view.bind(playerId));
             gameStateView.update(playerId);
@@ -78,8 +78,8 @@ public class Servicelayer {
     }
 
     public void removeEntity(int id) {
+        updateInProgress = true;
         commands.submit(() -> {
-            updateInProgress = true;
             EntityId entityId = new EntityId(id);
             views.forEach(view -> view.unbind(entityId));
             entityManager.removeEntity(model, entityId);
@@ -95,29 +95,33 @@ public class Servicelayer {
 
     public void setColor(String color) {
         commands.submit(() -> {
-            if (State.WAIT_AT_WORKSHOP == model.getStates().get(playerId).get()) {
-                model.getColors().get(playerId).setColor(color);
-                dispatcher.dispatch(() -> model.getColors().get(playerId).notifyObservers(playerId));
+            if (State.WAIT_AT_WORKSHOP == model.getStates().get(playerId).getSnapshot().state()) {
+                var comp = model.getColors().get(playerId);
+                comp.setSnapshot(new ColorSnapshot(color));
+
+                dispatcher.dispatch(() -> comp.notifyObservers(playerId, comp.getSnapshot()));
             }
         });
     }
 
     public void setSpeed(double speed) {
         commands.submit(() -> {
-            model.getSpeeds().get(playerId).setSnapshot(new SpeedSnapshot(speed));
-            model.getSpeeds().get(playerId).notifyObservers(playerId);
+            var comp = model.getSpeeds().get(playerId);
+            comp.setSnapshot(new SpeedSnapshot(speed));
+
+            dispatcher.dispatch(() -> comp.notifyObservers(playerId, comp.getSnapshot()));
         });
     }
 
     public void setEngine(EngineType engineType) {
         commands.submit(() -> {
-            if (State.WAIT_AT_WORKSHOP == model.getStates().get(playerId).get()) {
-                model.getEngines().get(playerId).setEngine(engineType);
-                Engine engine = model.getEngines().get(playerId).getActiveEngine();
+            if (State.WAIT_AT_WORKSHOP == model.getStates().get(playerId).getSnapshot().state()) {
+                var comp = model.getEngines().get(playerId);
+                comp.setEngine(engineType);
                 model.getStorage().get(playerId)
-                        .setSnapshot(new EnergyStorageSnapshot(engine.capacity(), engine.capacity()));
-
-                dispatcher.dispatch(() -> model.getEngines().get(playerId).notifyObservers(playerId));
+                        .setSnapshot(new EnergyStorageSnapshot(comp.getSnapshot().activeEngine().capacity(),
+                                comp.getSnapshot().activeEngine().capacity()));
+                dispatcher.dispatch(() -> comp.notifyObservers(playerId, comp.getSnapshot()));
             }
         });
     }
@@ -149,14 +153,14 @@ public class Servicelayer {
     }
 
     public void load() {
+        loadingCompleted = false;
         LoadedGameData data = persistenceLayerDataBase.load();
         commands.submit(() -> {
             if (data == null) {
                 return;
             }
-            loadingCompleted = false;
             loader.apply(data, model, engineFactory);
-            gameStateView.clear();
+            dispatcher.dispatch(gameStateView::clear);
             views.forEach(ParentView::rebind);
             loadingCompleted = true;
         });

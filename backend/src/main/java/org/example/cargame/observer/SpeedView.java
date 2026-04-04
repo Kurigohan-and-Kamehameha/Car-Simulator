@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
+public class SpeedView extends ParentView<CarModel> implements PushObserver<SpeedSnapshot> {
     private final Map<EntityId, SpeedSnapshot> cache = new ConcurrentHashMap<>();
 
     public SpeedView(CarModel model, ObserverDispatcher dispatcher) {
@@ -28,25 +28,25 @@ public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
     @Override
     public void bind(EntityId id) {
         SpeedSnapshot snap = model.getSpeeds().get(id).getSnapshot();
-        cache.put(id, snap);
         model.getSpeeds().get(id).addObserver(this);
+        dispatcher.dispatch(() -> cache.put(id, snap));
     }
 
     @Override
     public void rebind() {
-        cache.clear();
+        dispatcher.dispatch(cache::clear);
         bind();
     }
 
     @Override
     public void unbind(EntityId id) {
-        cache.remove(id);
         model.getSpeeds().get(id).removeObserver(this);
+        dispatcher.dispatch(() -> cache.remove(id));
     }
 
     @Override
-    public void update(EntityId id) {
-        cache.put(id, model.getSpeeds().get(id).getSnapshot());
+    public void update(EntityId id, SpeedSnapshot data) {
+        cache.put(id, data);
         super.notifyObservers(id);
     }
 
@@ -54,4 +54,5 @@ public class SpeedView extends ParentView<CarModel> implements SpeedObserver {
         SpeedSnapshot snap = cache.get(id);
         return snap != null ? snap.speed() : 0;
     }
+
 }

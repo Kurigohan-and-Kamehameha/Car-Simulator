@@ -9,7 +9,7 @@ public class SnapshotBuilder {
 
         model.getSpeeds().forEach((id, comp) -> {
             if (comp != null)
-                data.speeds.put(id, comp.getSnapshot());
+                data.speeds.put(id, comp.getSnapshot().speed());
         });
 
         model.getPositions().forEach((id, comp) -> {
@@ -19,17 +19,17 @@ public class SnapshotBuilder {
 
         model.getColors().forEach((id, comp) -> {
             if (comp != null)
-                data.colors.put(id, comp.getColor());
+                data.colors.put(id, comp.getSnapshot().color());
         });
 
         model.getEngines().forEach((id, comp) -> {
             if (comp != null)
-                data.engines.put(id, comp.getActiveEngine().getType());
+                data.engines.put(id, comp.getSnapshot().activeEngine().getType());
         });
 
         model.getMessages().forEach((id, comp) -> {
             if (comp != null)
-                data.messages.put(id, comp.getMessages());
+                data.messages.put(id, comp.getSnapshot().messages());
         });
 
         model.getStorage().forEach((id, comp) -> {
@@ -39,7 +39,7 @@ public class SnapshotBuilder {
 
         model.getStates().forEach((id, comp) -> {
             if (comp != null)
-                data.states.put(id, comp.get());
+                data.states.put(id, comp.getSnapshot().state());
         });
 
         model.getPaths().forEach((id, comp) -> {

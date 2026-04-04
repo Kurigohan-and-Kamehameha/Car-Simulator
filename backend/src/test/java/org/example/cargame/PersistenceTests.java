@@ -10,7 +10,9 @@ import org.example.cargame.persistence.GameLoader;
 import org.example.cargame.persistence.LoadedGameData;
 import org.example.cargame.persistence.PersistenceLayerDataBase;
 import org.example.cargame.persistence.SnapshotBuilder;
+import org.example.cargame.snapshot.ColorSnapshot;
 import org.example.cargame.snapshot.SpeedSnapshot;
+import org.example.cargame.snapshot.StateSnapshot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +37,7 @@ class PersistenceTests {
         EntityId id = new EntityId(1);
 
         ColorComponent color = new ColorComponent();
-        color.setColor("red");
+        color.setSnapshot(new ColorSnapshot("red"));
         model.getColors().put(id, color);
 
         SpeedComponent speed = new SpeedComponent();
@@ -43,7 +45,7 @@ class PersistenceTests {
         model.getSpeeds().put(id, speed);
 
         StateComponent state = new StateComponent();
-        state.set(State.WAIT_AT_WORKSHOP);
+        state.setSnapshot(new StateSnapshot(State.WAIT_AT_WORKSHOP));
         model.getStates().put(id, state);
 
         SnapshotBuilder builder = new SnapshotBuilder();
@@ -57,8 +59,8 @@ class PersistenceTests {
         CarModel newModel = new CarModel();
         loader.apply(loaded, newModel, engineFactory);
 
-        assertEquals("red", newModel.getColors().get(id).getColor());
+        assertEquals("red", newModel.getColors().get(id).getSnapshot().color());
         assertEquals(42, newModel.getSpeeds().get(id).getSnapshot().speed());
-        assertEquals(State.WAIT_AT_WORKSHOP, newModel.getStates().get(id).get());
+        assertEquals(State.WAIT_AT_WORKSHOP, newModel.getStates().get(id).getSnapshot().state());
     }
 }
