@@ -5,7 +5,7 @@ This project was constructed to solve distributed systems and concurrency challe
 
 ---
 
-## 🧠 Core Architecture & Design
+##  Core Architecture & Design
 
 ### Entity-Component-System (ECS) Purity
 - **Data-Oriented Design:** Complete segregation of business logic, mathematical models, and UI mapping. `EntityId` acts as the pure identity, mapping dynamically to isolated components (`SpeedComponent`, `EngineComponent`, etc.).
@@ -16,7 +16,7 @@ This project was constructed to solve distributed systems and concurrency challe
 
 ---
 
-## ⚡ Concurrency & Lock-Free Threading
+##  Concurrency & Lock-Free Threading
 
 To achieve deterministic simulation speed, the system implements a strict **Three-Stage Thread Pipeline** (mirroring professional AAA game mechanics):
 
@@ -33,7 +33,7 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 
 ---
 
-## 🌐 API & Communication
+##  API & Communication
 
 ### REST API
 - Provides endpoints for interacting with the simulation:
@@ -46,11 +46,11 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 - Sends updated `GameStateDTO` objects to clients instantly
 - Eliminates the need for polling
 
-➡️ Enables a **responsive real-time UI experience**
+➡ Enables a **responsive real-time UI experience**
 
 ---
 
-## 🗺️ Simulation Features
+##  Simulation Features
 
 - **Pathfinding using Dijkstra Algorithm**
 - Graph-based movement system with interactive nodes
@@ -65,7 +65,7 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 
 ---
 
-## 💾 Persistence Layer
+##  Persistence Layer
 
 - **SQLite + Spring Data JPA**
 - Save and load full simulation state
@@ -73,7 +73,7 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 
 ---
 
-## 🖥️ Frontend (Prompt Engineered with Antigravity)
+##  Frontend (Prompt Engineered with Antigravity)
 
 - Built with **React**
 - Consumes aggregated backend state (`GameStateDTO`)
@@ -81,7 +81,7 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 
 ---
 
-## 🧪 Testing
+## Testing
 
 - Unit tests for:
     - Core logic (e.g. pathfinding, command execution)
