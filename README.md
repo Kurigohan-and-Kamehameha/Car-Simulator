@@ -8,8 +8,7 @@ This project was constructed to solve distributed systems and concurrency challe
 ## 🧠 Core Architecture & Design
 
 ### Entity-Component-System (ECS) Purity
-- **Data-Oriented Design:** Complete segregation of business logic, mathematical models, and UI mapping. `EntityId` acts as the pure identity, mapping dynamically to isolated components (`SpeedComponent`, `EngineComponent`).
-- **Single Responsibility Principle:** Business rules and bidirectional logic are strictly contained within the `Servicelayer`, preventing infinite UI "Update Storms" and keeping components as clean data envelopes.
+- **Data-Oriented Design:** Complete segregation of business logic, mathematical models, and UI mapping. `EntityId` acts as the pure identity, mapping dynamically to isolated components (`SpeedComponent`, `EngineComponent`, etc.).
 
 ### Double-layered Hybrid Push-Pull Observer Pattern
 - **The Push Boundary (`PushObserver<T>`):** The core physics model securely *pushes* highly-generic, immutable snapshots directly across thread boundaries using captured lambdas. This mathematically eliminates `NullPointerExceptions` caused by concurrent entity mapping/garbage collection.
@@ -29,8 +28,8 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 3. **Rendering Stage (`ObserverThread`)**
    - A dedicated rendering background thread cleanly empties an `ObserverDispatcher` queue, separating network serialization workload from the physics simulation.
 
-### Torn-Read Prevention
-- Engineered a **Batched-UI pipeline** that perfectly encapsulates varied asynchronous metric calculations into a single flawless mathematical frame. This structurally eliminates 'Torn Reads', race-conditions, and 'Ghost/Zombie' entity anomalies from appearing on the frontend network socket.
+### Torn-Read & Torn-Frame Prevention
+- Engineered a **Batched-UI pipeline** that perfectly encapsulates varied asynchronous metric calculations into a single flawless mathematical frame. This structurally eliminates 'Torn Reads', 'Torn Frames', race-conditions, and 'Ghost/Zombie' entity anomalies from appearing on the frontend network socket. By orchestrating a final, unified push of a `GameStateDTO` to the WebSocket only at the end of the physics tick, it improves performance and guarantees that the frontend renders a complete, coherent frame (avoiding visual stuttering mid-calculation).
 
 ---
 

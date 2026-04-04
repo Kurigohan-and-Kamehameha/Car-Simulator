@@ -44,19 +44,7 @@ public class GameLoader {
             comp.setSnapshot(path);
             model.getPaths().put(id, comp);
         });
-        /*
-        for (EntityId id : model.getAllEntities()) {
-            if(data.colors.get(id) != null){
-                PathSnapshot snap = data.paths.get(id);
-                if (snap == null) {
-                    snap = new PathSnapshot(new ArrayList<>(), 0);
-                }
-                PathComponent comp = new PathComponent();
-                comp.setSnapshot(snap);
-                model.getPaths().put(id, comp);
-            }
-        }
-        */
+
         data.messages.forEach((id, msgMap) -> {
             MessageComponent comp = new MessageComponent();
             comp.setSnapshot(new MessageSnapshot(msgMap));

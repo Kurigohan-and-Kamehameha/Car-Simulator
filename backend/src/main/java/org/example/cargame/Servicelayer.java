@@ -1,6 +1,5 @@
 package org.example.cargame;
 
-import jakarta.annotation.PostConstruct;
 import org.example.cargame.commands.SetDirectionCommand;
 import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.EngineType;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,8 +36,8 @@ public class Servicelayer {
 
     private volatile EntityId playerId;
 
-    private volatile boolean updateInProgress = true;
-    private volatile boolean loadingCompleted = false;
+    private final AtomicInteger pendingUpdates = new AtomicInteger(0);
+    private volatile boolean loadingCompleted = true;
 
     public Servicelayer(CarModel model, CommandQueue commands, Dijkstra dij, Graph graph,
             EngineFactory engineFactory, PersistenceLayerDataBase persistenceLayerDataBase,
@@ -59,32 +60,26 @@ public class Servicelayer {
                 .orElse(null);
     }
 
-    @PostConstruct
-    public void init() {
-        updateInProgress = false;
-        loadingCompleted = true;
-    }
-
     public void createEntity(String nodeId) {
-        updateInProgress = true;
+        pendingUpdates.incrementAndGet();
         commands.submit(() -> {
             playerId = entityManager.createEntity(model, nodeId);
             views.forEach(view -> view.bind(playerId));
             gameStateView.update(playerId);
             dispatcher.dispatch(() -> gameStateView.update(playerId));
-            updateInProgress = false;
+            pendingUpdates.decrementAndGet();
         });
 
     }
 
     public void removeEntity(int id) {
-        updateInProgress = true;
+        pendingUpdates.incrementAndGet();
         commands.submit(() -> {
             EntityId entityId = new EntityId(id);
             views.forEach(view -> view.unbind(entityId));
             entityManager.removeEntity(model, entityId);
             dispatcher.dispatch(() -> gameStateView.remove(entityId));
-            updateInProgress = false;
+            pendingUpdates.decrementAndGet();
         });
     }
 
@@ -141,22 +136,27 @@ public class Servicelayer {
     }
 
     public boolean getUpdateInProgress() {
-        return updateInProgress;
+        return pendingUpdates.get() > 0;
     }
 
     public void save() {
         commands.submit(() -> {
             SnapshotBuilder snapshotBuilder = new SnapshotBuilder();
             LoadedGameData data = snapshotBuilder.build(model);
-            persistenceLayerDataBase.save(data);
+            CompletableFuture.runAsync(() -> persistenceLayerDataBase.save(data));
         });
     }
 
     public void load() {
+        if (!loadingCompleted)
+            return;
         loadingCompleted = false;
+
         LoadedGameData data = persistenceLayerDataBase.load();
+
         commands.submit(() -> {
             if (data == null) {
+                loadingCompleted = true;
                 return;
             }
             loader.apply(data, model, engineFactory);
