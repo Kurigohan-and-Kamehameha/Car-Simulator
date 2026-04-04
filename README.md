@@ -46,7 +46,7 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 - Sends updated `GameStateDTO` objects to clients instantly
 - Eliminates the need for polling
 
-➡ Enables a **responsive real-time UI experience**
+Enables a **responsive real-time UI experience**
 
 ---
 
