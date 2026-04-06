@@ -61,6 +61,7 @@ Enables a **responsive real-time UI experience**
     - Speed
     - Engine type
     - Energy storage
+    - Color
     - State & messages
 
 ---
