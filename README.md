@@ -21,12 +21,12 @@ This project was constructed to solve distributed systems and concurrency challe
 To achieve deterministic simulation speed, the system implements a strict **Three-Stage Thread Pipeline** (mirroring professional AAA game mechanics):
 
 1. **Input Stage (REST / WebSockets)**
-   - HTTP threads do not block or manually mutate data. User interactions are rapidly digested onto a non-blocking `CommandQueue` to guarantee zero server latency.
+    - HTTP threads do not block or manually mutate data. User interactions are rapidly digested onto a non-blocking `CommandQueue` to guarantee zero server latency.
 2. **Physics Stage (`GameLoopThread`)**
-   - Freed from String concatenation and DTO mapping, the core logic thread securely drains the Command Queue and computes pure telemetry mathematics.
-   - Constructed using **Optimistic Concurrency** and **Atomic Guards** instead of heavy, unscalable `synchronized` locks. 
+    - Freed from String concatenation and DTO mapping, the core logic thread securely drains the Command Queue and computes pure telemetry mathematics.
+    - Constructed using **Optimistic Concurrency** and **Atomic Guards** instead of heavy, unscalable `synchronized` locks.
 3. **Rendering Stage (`ObserverThread`)**
-   - A dedicated rendering background thread cleanly empties an `ObserverDispatcher` queue, separating network serialization workload from the physics simulation.
+    - A dedicated rendering background thread cleanly empties an `ObserverDispatcher` queue, separating network serialization workload from the physics simulation.
 
 ### Torn-Read & Torn-Frame Prevention
 - Engineered a **Batched-UI pipeline** that perfectly encapsulates varied asynchronous metric calculations into a single flawless mathematical frame. This structurally eliminates 'Torn Reads', 'Torn Frames', race-conditions, and 'Ghost/Zombie' entity anomalies from appearing on the frontend network socket. By orchestrating a final, unified push of a `GameStateDTO` to the WebSocket only at the end of the physics tick, it improves performance and guarantees that the frontend renders a complete, coherent frame (avoiding visual stuttering mid-calculation).
@@ -46,7 +46,7 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
 - Sends updated `GameStateDTO` objects to clients instantly
 - Eliminates the need for polling
 
-➡ Enables a **responsive real-time UI experience**
+Enables a **responsive real-time UI experience**
 
 ---
 
@@ -61,6 +61,7 @@ To achieve deterministic simulation speed, the system implements a strict **Thre
     - Speed
     - Engine type
     - Energy storage
+    - Color
     - State & messages
 
 ---

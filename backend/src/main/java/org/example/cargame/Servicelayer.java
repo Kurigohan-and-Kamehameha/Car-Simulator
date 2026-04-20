@@ -162,7 +162,7 @@ public class Servicelayer {
             loader.apply(data, model, engineFactory);
             dispatcher.dispatch(gameStateView::clear);
             views.forEach(ParentView::rebind);
-            loadingCompleted = true;
+            dispatcher.dispatch(() -> loadingCompleted = true);
         });
     }
 
