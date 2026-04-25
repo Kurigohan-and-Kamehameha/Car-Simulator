@@ -56,8 +56,6 @@ public class GraphConfig {
         graph.addEdge(h, d);
         graph.addEdge(e, j);
 
-        System.out.println(graph.toString());
-
         return graph;
     }
 }

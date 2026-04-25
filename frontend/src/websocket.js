@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 
-const WS_URL = 'http://localhost:8080/ws';
+const WS_URL = '/ws';
 
 export class GameWebSocket {
   constructor() {
@@ -11,8 +11,8 @@ export class GameWebSocket {
         // console.log(str); // Uncomment for debugging
       },
       reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
+      heartbeatIncoming: 0,
+      heartbeatOutgoing: 0,
     });
   }
 

@@ -11,6 +11,7 @@ import org.example.cargame.snapshot.*;
 import org.example.cargame.enums.MessageType;
 
 import java.util.List;
+import java.util.Map;
 
 public class PhysicsEngine {
 
@@ -18,6 +19,7 @@ public class PhysicsEngine {
     private final GameStateView gameStateView;
     private final ObserverDispatcher dispatcher;
     private static final double DELTA_TIME = 0.016;
+    private final Map<EntityId, State> lastSentStates = new java.util.HashMap<>();
 
     public PhysicsEngine(CarModel model, GameStateView gameStateView, ObserverDispatcher dispatcher) {
         this.model = model;
@@ -115,20 +117,26 @@ public class PhysicsEngine {
 
     public void notifyObservers() {
         for (EntityId id : model.getAllEntities()) {
+            State currentState = model.getStates().get(id).getSnapshot().state();
+            State lastState = lastSentStates.get(id);
 
-            PositionSnapshot posSnap = model.getPositions().get(id).getSnapshot();
-            StateSnapshot stateSnap = model.getStates().get(id).getSnapshot();
-            MessageSnapshot messageSnap = model.getMessages().get(id).getSnapshot();
-            EnergyStorageSnapshot storageSnap = model.getStorage().get(id).getSnapshot();
+            if (currentState == State.DRIVE || currentState != lastState) {
+                PositionSnapshot posSnap = model.getPositions().get(id).getSnapshot();
+                StateSnapshot stateSnap = model.getStates().get(id).getSnapshot();
+                MessageSnapshot messageSnap = model.getMessages().get(id).getSnapshot();
+                EnergyStorageSnapshot storageSnap = model.getStorage().get(id).getSnapshot();
 
-            dispatcher.dispatch(() -> {
-                model.getPositions().get(id).notifyObservers(id, posSnap);
-                model.getStates().get(id).notifyObservers(id, stateSnap);
-                model.getMessages().get(id).notifyObservers(id, messageSnap);
-                model.getStorage().get(id).notifyObservers(id, storageSnap);
+                dispatcher.dispatch(() -> {
+                    model.getPositions().get(id).notifyObservers(id, posSnap);
+                    model.getStates().get(id).notifyObservers(id, stateSnap);
+                    model.getMessages().get(id).notifyObservers(id, messageSnap);
+                    model.getStorage().get(id).notifyObservers(id, storageSnap);
 
-                gameStateView.update(id);
-            });
+                    gameStateView.update(id);
+                });
+
+                lastSentStates.put(id, currentState);
+            }
         }
     }
 

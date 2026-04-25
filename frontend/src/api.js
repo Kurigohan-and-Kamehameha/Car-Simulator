@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8080/api/game';
+const API_BASE = '/api/game';
 
 export const getGraph = async () => {
   const response = await axios.get(`${API_BASE}/graph`);

@@ -27,12 +27,7 @@ public class DemoRunner implements CommandLineRunner {
         PhysicsEngine physics = new PhysicsEngine(model, gameStateView, dispatcher);
         GameLoop loop = new GameLoop(physics, commands);
 
-        Thread observerThread = new Thread(dispatcher, "ObserverThread");
-        observerThread.setDaemon(true);
-        observerThread.start();
-
-        Thread loopThread = new Thread(loop, "GameLoopThread");
-        loopThread.setDaemon(true);
-        loopThread.start();
+        Thread.ofVirtual().name("ObserverThread").start(dispatcher);
+        Thread.ofVirtual().name("GameLoopThread").start(loop);
     }
 }
