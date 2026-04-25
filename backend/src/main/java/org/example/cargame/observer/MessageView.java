@@ -47,7 +47,10 @@ public class MessageView extends ParentView<CarModel> implements PushObserver<Me
 
     @Override
     public void update(EntityId id, MessageSnapshot data) {
-        cache.put(id, data);
+        MessageSnapshot old = cache.put(id, data);
+        if (old == null || !old.equals(data)) {
+            super.notifyObservers(id);
+        }
     }
 
     public String alert(EntityId id) {

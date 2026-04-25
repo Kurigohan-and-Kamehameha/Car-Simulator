@@ -116,7 +116,11 @@ public class Servicelayer {
                 model.getStorage().get(playerId)
                         .setSnapshot(new EnergyStorageSnapshot(comp.getSnapshot().activeEngine().capacity(),
                                 comp.getSnapshot().activeEngine().capacity()));
-                dispatcher.dispatch(() -> comp.notifyObservers(playerId, comp.getSnapshot()));
+                dispatcher.dispatch(() -> {
+                    model.getStorage().get(playerId).notifyObservers(playerId,
+                            model.getStorage().get(playerId).getSnapshot());
+                    comp.notifyObservers(playerId, comp.getSnapshot());
+                });
             }
         });
     }

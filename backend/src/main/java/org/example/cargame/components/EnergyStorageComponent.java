@@ -12,4 +12,5 @@ public class EnergyStorageComponent extends Component<EnergyStorageSnapshot> {
     public void setSnapshot(EnergyStorageSnapshot snapshot) {
         this.snapshot = snapshot;
     }
+
 }

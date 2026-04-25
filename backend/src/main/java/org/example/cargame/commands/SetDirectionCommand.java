@@ -59,7 +59,7 @@ public class SetDirectionCommand implements Command {
                     if (currentPower < weight) {
                         var compMessages = model.getMessages().get(playerId);
                         compMessages.addMessage(MessageType.ALERT, "Not enough Power to reach target");
-                        model.getMessages().get(playerId).notifyObservers(playerId, compMessages.getSnapshot());
+                        compMessages.notifyObservers(playerId, compMessages.getSnapshot());
                         return;
                     }
                     currentPower -= weight;
@@ -87,7 +87,7 @@ public class SetDirectionCommand implements Command {
                     var compMessages = model.getMessages().get(playerId);
                     compMessages.addMessage(MessageType.ALERT,
                             "Not enough Power to reach next gas station after target");
-                    model.getMessages().get(playerId).notifyObservers(playerId, compMessages.getSnapshot());
+                    compMessages.notifyObservers(playerId, compMessages.getSnapshot());
                     return;
                 }
 
