@@ -25,7 +25,14 @@ const CanvasRenderer = ({ graph, gameState, onNodeClick }) => {
                 animRef.current.lastColor = nextTarget.color;
                 animRef.current.initialized = true;
             } else {
-                animRef.current.queue.push(nextTarget);
+                const q = animRef.current.queue;
+                const last = q.length > 0 
+                    ? q[q.length - 1] 
+                    : { x: animRef.current.currentX, y: animRef.current.currentY, color: animRef.current.lastColor };
+
+                if (last.x !== nextTarget.x || last.y !== nextTarget.y || last.color !== nextTarget.color) {
+                    q.push(nextTarget);
+                }
             }
         }
     }, [gameState]);

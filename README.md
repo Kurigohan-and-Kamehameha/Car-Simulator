@@ -7,6 +7,8 @@ A lock-free, deterministic car simulation engine designed to solve distributed s
 - **Frontend:** React, Vite
 - **DevOps & Deployment:** Docker, Docker Compose, GitHub Actions (CI/CD)
 
+> **Note on Frontend:** As my core engineering focus for this project lies in backend architecture and concurrent systems, the React Frontend was built using prompt engineering.
+
 ---
 
 ## Running the Application
