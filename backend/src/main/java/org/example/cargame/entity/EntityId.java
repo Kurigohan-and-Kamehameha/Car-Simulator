@@ -1,11 +1,9 @@
 package org.example.cargame.entity;
 
 import java.util.Objects;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class EntityId {
     private final int id;
-    private final ReentrantLock lock = new ReentrantLock();
 
     public EntityId(int id) {
         this.id = id;
@@ -17,8 +15,10 @@ public class EntityId {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EntityId entityId)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof EntityId entityId))
+            return false;
         return id == entityId.id;
     }
 
@@ -32,11 +32,4 @@ public class EntityId {
         return "EntityId{" + id + '}';
     }
 
-    public void lock() {
-        lock.lock();
-    }
-
-    public void unlock() {
-        lock.unlock();
-    }
 }

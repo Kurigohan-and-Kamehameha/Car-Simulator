@@ -2,7 +2,7 @@ package org.example.cargame.persistence;
 
 import org.example.cargame.CarModel;
 
-public class SnapshotBuilder {
+public final class SnapshotBuilder {
 
     public LoadedGameData build(CarModel model) {
         LoadedGameData data = new LoadedGameData();
