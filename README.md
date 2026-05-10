@@ -11,6 +11,10 @@ A lock-free, deterministic car simulation engine designed to solve distributed s
 
 ---
 
+![car racing](images/car-racing.png)
+
+---
+
 ## Running the Application
 
 ### Option 1: Docker (Recommended)
