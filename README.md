@@ -11,7 +11,7 @@ A lock-free, deterministic car simulation engine designed to solve distributed s
 
 ---
 
-![car racing](images/car-racing.png)
+![car racing](screenshots/image.png)
 
 ---
 
