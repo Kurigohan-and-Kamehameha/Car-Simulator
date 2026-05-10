@@ -9,42 +9,42 @@ public final class SnapshotBuilder {
 
         model.getSpeeds().forEach((id, comp) -> {
             if (comp != null)
-                data.speeds.put(id, comp.getSnapshot().speed());
+                data.speeds().put(id, comp.getSnapshot().speed());
         });
 
         model.getPositions().forEach((id, comp) -> {
             if (comp != null)
-                data.positions.put(id, comp.getSnapshot());
+                data.positions().put(id, comp.getSnapshot());
         });
 
         model.getColors().forEach((id, comp) -> {
             if (comp != null)
-                data.colors.put(id, comp.getSnapshot().color());
+                data.colors().put(id, comp.getSnapshot().color());
         });
 
         model.getEngines().forEach((id, comp) -> {
             if (comp != null)
-                data.engines.put(id, comp.getSnapshot().activeEngine().getType());
+                data.engines().put(id, comp.getSnapshot().activeEngine().getType());
         });
 
         model.getMessages().forEach((id, comp) -> {
             if (comp != null)
-                data.messages.put(id, comp.getSnapshot().messages());
+                data.messages().put(id, comp.getSnapshot().messages());
         });
 
         model.getStorage().forEach((id, comp) -> {
             if (comp != null)
-                data.storage.put(id, comp.getSnapshot());
+                data.storage().put(id, comp.getSnapshot());
         });
 
         model.getStates().forEach((id, comp) -> {
             if (comp != null)
-                data.states.put(id, comp.getSnapshot().state());
+                data.states().put(id, comp.getSnapshot().state());
         });
 
         model.getPaths().forEach((id, comp) -> {
             if (comp != null)
-                data.paths.put(id, comp.getSnapshot());
+                data.paths().put(id, comp.getSnapshot());
         });
 
         return data;

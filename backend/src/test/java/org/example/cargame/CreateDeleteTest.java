@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CreateDeleteTest {
 
     @Autowired
-    private Servicelayer servicelayer;
+    private ServiceLayer servicelayer;
 
     @Autowired
     private CommandQueue commands;

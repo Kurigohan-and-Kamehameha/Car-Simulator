@@ -1,6 +1,8 @@
 package org.example.cargame.observer;
 
 import org.example.cargame.entity.EntityId;
+import org.example.cargame.enums.EngineType;
+import org.example.cargame.snapshot.EnergyStorage;
 import org.example.cargame.snapshot.GameStateDTO;
 import org.example.cargame.snapshot.PositionSnapshot;
 import org.springframework.stereotype.Component;
@@ -56,8 +58,15 @@ public class GameStateView implements Observer {
     @Override
     public void update(EntityId id) {
         PositionSnapshot snapPos = positionView.getPosition(id);
-
+        EngineType engineType = engineView.getEngineType(id);
+        EnergyStorage energyStorage = storageView.getEnergyStorages(id).get(engineType);
         if (snapPos == null) {
+            return;
+        }
+        if (engineType == null) {
+            return;
+        }
+        if (energyStorage == null) {
             return;
         }
 
@@ -65,8 +74,8 @@ public class GameStateView implements Observer {
                 snapPos.x(),
                 snapPos.y(),
                 colorView.getColor(id),
-                engineView.getEngineType(id),
-                storageView.getPower(id),
+                engineType,
+                energyStorage.getPercentage100(),
                 stateView.getState(id),
                 messageView.alert(id),
                 messageView.warning(id),

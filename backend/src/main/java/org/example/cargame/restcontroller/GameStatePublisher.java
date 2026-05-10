@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import org.example.cargame.Servicelayer;
+import org.example.cargame.ServiceLayer;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.util.Map;
@@ -18,22 +18,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameStatePublisher {
 
     private final SimpMessagingTemplate messagingTemplate;
-    private final Servicelayer serviceLayer;
+    private final ServiceLayer serviceLayer;
 
-    public GameStatePublisher(SimpMessagingTemplate messagingTemplate, Servicelayer serviceLayer) {
+    public GameStatePublisher(SimpMessagingTemplate messagingTemplate, ServiceLayer serviceLayer) {
         this.messagingTemplate = messagingTemplate;
         this.serviceLayer = serviceLayer;
     }
 
     private final Map<Integer, GameStateDTO> lastPublished = new ConcurrentHashMap<>();
 
-    private long lastHeartbeatTime = System.currentTimeMillis();
+    private volatile long lastHeartbeatTime = System.currentTimeMillis();
 
     @Scheduled(fixedRate = 50)
     public void publishGameState() {
         Map<Integer, GameStateDTO> snapshot = serviceLayer.getAllGameStates();
 
-        if (!serviceLayer.getLoadingCompete() || serviceLayer.getUpdateInProgress())
+        if (!serviceLayer.isLoadingComplete() || serviceLayer.getUpdateInProgress())
             return;
 
         boolean forceHeartbeat = (System.currentTimeMillis() - lastHeartbeatTime) > 2000;

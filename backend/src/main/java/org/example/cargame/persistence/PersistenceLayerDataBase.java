@@ -7,7 +7,7 @@ import org.example.cargame.enums.MessageType;
 import org.example.cargame.graph.Edge;
 import org.example.cargame.graph.Graph;
 import org.example.cargame.graph.Node;
-import org.example.cargame.persistence.entitys.*;
+import org.example.cargame.persistence.entities.*;
 import org.example.cargame.snapshot.*;
 import org.springframework.stereotype.Repository;
 
@@ -42,21 +42,21 @@ public class PersistenceLayerDataBase {
 
     @Transactional
     public void save(LoadedGameData data) {
-        data.states.forEach((id, state) -> {
+        data.states().forEach((id, state) -> {
             StateComponentEntity entity = new StateComponentEntity();
             entity.setId((long) id.getId());
             entity.setState(state);
             stateRepo.save(entity);
         });
 
-        data.speeds.forEach((id, speed) -> {
+        data.speeds().forEach((id, speed) -> {
             SpeedComponentEntity entity = new SpeedComponentEntity();
             entity.setId((long) id.getId());
             entity.setSpeed(speed);
             speedRepo.save(entity);
         });
 
-        data.positions.forEach((id, snap) -> {
+        data.positions().forEach((id, snap) -> {
             PositionComponentEntity entity = new PositionComponentEntity();
             entity.setId((long) id.getId());
             entity.setX(snap.x());
@@ -71,21 +71,21 @@ public class PersistenceLayerDataBase {
             positionRepo.save(entity);
         });
 
-        data.colors.forEach((id, color) -> {
+        data.colors().forEach((id, color) -> {
             ColorComponentEntity entity = new ColorComponentEntity();
             entity.setId((long) id.getId());
             entity.setColor(color);
             colorRepo.save(entity);
         });
 
-        data.engines.forEach((id, type) -> {
+        data.engines().forEach((id, type) -> {
             EngineComponentEntity entity = new EngineComponentEntity();
             entity.setId((long) id.getId());
             entity.setEngineType(type.toString());
             engineRepo.save(entity);
         });
 
-        data.paths.forEach((id, snap) -> {
+        data.paths().forEach((id, snap) -> {
             if (snap == null) {
                 snap = new PathSnapshot(new ArrayList<>(), 0);
             }
@@ -101,7 +101,7 @@ public class PersistenceLayerDataBase {
             pathRepo.save(entity);
         });
 
-        data.messages.forEach((id, msgMap) -> {
+        data.messages().forEach((id, msgMap) -> {
             MessageComponentEntity entity = new MessageComponentEntity();
             entity.setId((long) id.getId());
             Map<MessageType, String> filtered = new HashMap<>();
@@ -114,11 +114,13 @@ public class PersistenceLayerDataBase {
             messageRepo.save(entity);
         });
 
-        data.storage.forEach((id, snap) -> {
+        data.storage().forEach((id, snap) -> {
             EnergyStorageComponentEntity entity = new EnergyStorageComponentEntity();
             entity.setId((long) id.getId());
-            entity.setCapacity(snap.capacity());
-            entity.setPower(snap.power());
+            Map<EngineType, EnergyStorageData> entityMap = new HashMap<>();
+            snap.storageList().forEach((type, storageRecord) ->
+                entityMap.put(type, new EnergyStorageData(storageRecord.power(), storageRecord.capacity())));
+            entity.setStorages(entityMap);
             energyRepo.save(entity);
         });
     }
@@ -132,7 +134,7 @@ public class PersistenceLayerDataBase {
 
         speedRepo.findAll().forEach(entity -> {
             EntityId id = new EntityId(entity.getId().intValue());
-            data.speeds.put(id, entity.getSpeed());
+            data.speeds().put(id, entity.getSpeed());
         });
 
         positionRepo.findAll().forEach(entity -> {
@@ -159,17 +161,17 @@ public class PersistenceLayerDataBase {
                         entity.getY());
             }
 
-            data.positions.put(id, snapshot);
+            data.positions().put(id, snapshot);
         });
 
         colorRepo.findAll().forEach(entity -> {
             EntityId id = new EntityId(entity.getId().intValue());
-            data.colors.put(id, entity.getColor());
+            data.colors().put(id, entity.getColor());
         });
 
         engineRepo.findAll().forEach(entity -> {
             EntityId id = new EntityId(entity.getId().intValue());
-            data.engines.put(id, EngineType.fromDisplayName(entity.getEngineType()));
+            data.engines().put(id, EngineType.fromDisplayName(entity.getEngineType()));
         });
 
         pathRepo.findAll().forEach(entity -> {
@@ -185,7 +187,7 @@ public class PersistenceLayerDataBase {
                     Node to = graph.getNodeById(edgeIdsToCopy.get(i));
                     path.add(new Edge(from, to));
                 }
-                data.paths.put(id, new PathSnapshot(path, entity.getCurrentEdgeIndex()));
+                data.paths().put(id, new PathSnapshot(path, entity.getCurrentEdgeIndex()));
             }
         });
 
@@ -193,17 +195,22 @@ public class PersistenceLayerDataBase {
             EntityId id = new EntityId(entity.getId().intValue());
             Map<MessageType, String> messagesCopy = new HashMap<>(entity.getMessages());
             messagesCopy.putIfAbsent(MessageType.ALERT, "");
-            data.messages.put(id, messagesCopy);
+            data.messages().put(id, messagesCopy);
         });
 
         energyRepo.findAll().forEach(entity -> {
             EntityId id = new EntityId(entity.getId().intValue());
-            data.storage.put(id, new EnergyStorageSnapshot(entity.getPower(), entity.getCapacity()));
+            Map<EngineType, EnergyStorage> snapshotMap = new HashMap<>();
+            if (entity.getStorages() != null) {
+                entity.getStorages().forEach((type, dbData) ->
+                    snapshotMap.put(type, new EnergyStorage(dbData.power(), dbData.capacity())));
+            }
+            data.storage().put(id, new EnergyStorageSnapshot(snapshotMap));
         });
 
         stateRepo.findAll().forEach(entity -> {
             EntityId id = new EntityId(entity.getId().intValue());
-            data.states.put(id, entity.getState());
+            data.states().put(id, entity.getState());
         });
 
         return data;

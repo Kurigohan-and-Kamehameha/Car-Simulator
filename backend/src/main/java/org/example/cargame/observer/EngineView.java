@@ -52,7 +52,8 @@ public class EngineView extends ParentView<CarModel> implements PushObserver<Eng
     }
 
     public EngineType getEngineType(EntityId id) {
-        return cache.get(id).activeEngine().getType();
+        EngineSnapshot snap = cache.get(id);
+        return snap != null ? snap.activeEngine().getType() : null;
     }
 
 }

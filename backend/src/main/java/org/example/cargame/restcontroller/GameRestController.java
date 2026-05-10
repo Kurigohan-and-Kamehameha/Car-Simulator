@@ -1,7 +1,7 @@
 package org.example.cargame.restcontroller;
 
 import org.example.cargame.enums.EngineType;
-import org.example.cargame.Servicelayer;
+import org.example.cargame.ServiceLayer;
 import org.example.cargame.graph.Graph;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin
 @RequestMapping("/api/game")
 public class GameRestController {
-    private final Servicelayer servicelayer;
+    private final ServiceLayer servicelayer;
 
-    public GameRestController(Servicelayer servicelayer) {
+    public GameRestController(ServiceLayer servicelayer) {
         this.servicelayer = servicelayer;
     }
 

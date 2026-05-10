@@ -2,6 +2,8 @@ package org.example.cargame.observer;
 
 import org.example.cargame.CarModel;
 import org.example.cargame.entity.EntityId;
+import org.example.cargame.enums.EngineType;
+import org.example.cargame.snapshot.EnergyStorage;
 import org.example.cargame.snapshot.EnergyStorageSnapshot;
 import org.springframework.stereotype.Component;
 
@@ -50,9 +52,9 @@ public class StorageView extends ParentView<CarModel> implements PushObserver<En
         cache.put(id, data);
     }
 
-    public double getPower(EntityId id) {
-        EnergyStorageSnapshot snap = cache.get(id);
-        return snap != null ? snap.getPercentage100() : 0;
+    public Map<EngineType, EnergyStorage> getEnergyStorages(EntityId id) {
+        EnergyStorageSnapshot snap = cache.get(id);  // this is what can be null
+        return snap != null ? snap.storageList() : Map.of();
     }
 
 

@@ -51,15 +51,16 @@ public class SetDirectionCommand implements Command {
                 if (path.isEmpty())
                     return;
 
-                double currentPower = model.getStorage().get(playerId).getSnapshot().power();
-                double capacity = model.getStorage().get(playerId).getSnapshot().capacity();
+                var engineType = model.getEngines().get(playerId).getSnapshot().activeEngine().getType();
+                double currentPower = model.getStorage().get(playerId).getSnapshot().get(engineType).power();
+                double capacity = model.getStorage().get(playerId).getSnapshot().get(engineType).capacity();
 
                 for (Edge edge : path) {
                     double weight = edge.getWeight();
                     if (currentPower < weight) {
                         var compMessages = model.getMessages().get(playerId);
                         compMessages.addMessage(MessageType.ALERT, "Not enough Power to reach target");
-                        compMessages.notifyObservers(playerId, compMessages.getSnapshot());
+                        dispatcher.dispatch(() ->compMessages.notifyObservers(playerId, compMessages.getSnapshot()));
                         return;
                     }
                     currentPower -= weight;
@@ -87,7 +88,7 @@ public class SetDirectionCommand implements Command {
                     var compMessages = model.getMessages().get(playerId);
                     compMessages.addMessage(MessageType.ALERT,
                             "Not enough Power to reach next gas station after target");
-                    compMessages.notifyObservers(playerId, compMessages.getSnapshot());
+                    dispatcher.dispatch(() ->compMessages.notifyObservers(playerId, compMessages.getSnapshot()));
                     return;
                 }
 

@@ -5,6 +5,7 @@ import org.example.cargame.entity.EntityId;
 import org.example.cargame.enums.ModelType;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,7 +49,7 @@ public class CarModel extends Model {
     }
 
     public Collection<EntityId> getAllEntities() {
-        return positions.keySet();
+        return List.copyOf(positions.keySet());
     }
 
     public Map<EntityId, PositionComponent> getPositions() {

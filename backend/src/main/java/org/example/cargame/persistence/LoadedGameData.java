@@ -9,14 +9,19 @@ import org.example.cargame.snapshot.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class LoadedGameData {
-    public final Map<EntityId, Double> speeds = new HashMap<>();
-    public final Map<EntityId, PositionSnapshot> positions = new HashMap<>();
-    public final Map<EntityId, String> colors = new HashMap<>();
-    public final Map<EntityId, EngineType> engines = new HashMap<>();
-    public final Map<EntityId, PathSnapshot> paths = new HashMap<>();
-    public final Map<EntityId, Map<MessageType, String>> messages = new HashMap<>();
-    public final Map<EntityId, EnergyStorageSnapshot> storage = new HashMap<>();
-    public final Map<EntityId, State> states = new HashMap<>();
-
+public record LoadedGameData(
+        Map<EntityId, Double> speeds,
+        Map<EntityId, PositionSnapshot> positions,
+        Map<EntityId, String> colors,
+        Map<EntityId, EngineType> engines,
+        Map<EntityId, PathSnapshot> paths,
+        Map<EntityId, Map<MessageType, String>> messages,
+        Map<EntityId, EnergyStorageSnapshot> storage,
+        Map<EntityId, State> states
+) {
+    // Kompakter Konstruktor für Standardwerte (optional)
+    public LoadedGameData() {
+        this(new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
+                new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+    }
 }
